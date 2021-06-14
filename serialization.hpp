@@ -1,9 +1,9 @@
-#ifndef LIS_SERIALIZATION_HPP
-#define LIS_SERIALIZATION_HPP
+#ifndef NVX_SERIALIZATION_HPP
+#define NVX_SERIALIZATION_HPP
 
 /**
  * \file Файл, в котором хранятся средства сериализации
- * \autor lis
+ * \autor nvx
  * \date Oct  5 14:14:45 2020
  */
 
@@ -23,8 +23,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <lis/string.hpp>
-#include <lis/type.hpp>
+#include <nvx/type.hpp>
 
 
 
@@ -70,7 +69,7 @@ inline void after_deserialization() {}
 
 
 /// Основное пространство имён
-namespace lis
+namespace nvx
 {
 
 
@@ -247,7 +246,7 @@ public:
 
 
 private:
-	friend class lis::Lira<Meta>;
+	friend class nvx::Lira<Meta>;
 
 	Stream *s;
 	int  mode;
@@ -498,8 +497,8 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
  *      записать его; в статическом массиве указывается непосредственно
  *      целое число (будет представлено как int)
  */
-#define LIS_SERIALIZABLE_DYNAMIC_ARRAY(ptr, sizeptr) \
-	lis::_serializable_dynamic_array_type< \
+#define NVX_SERIALIZABLE_DYNAMIC_ARRAY(ptr, sizeptr) \
+	nvx::_serializable_dynamic_array_type< \
 		typename std::remove_reference<decltype(**ptr)>::type ** \
 	> { \
 		(typename std::remove_reference<decltype(**ptr)>::type **)ptr, \
@@ -508,8 +507,8 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
 		>::type>::type *)sizeptr \
 	}
 
-#define LIS_SERIALIZABLE_STATIC_ARRAY(ptr, size) \
-	lis::_serializable_static_array_type< \
+#define NVX_SERIALIZABLE_STATIC_ARRAY(ptr, size) \
+	nvx::_serializable_static_array_type< \
 		typename std::remove_reference<decltype(*ptr)>::type * \
 	> { \
 		ptr, size \
@@ -525,10 +524,10 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
  *     контейнеры)
  *
  *   - Динамические массивы (используется макрос
- *     LIS_SERIALIZABLE_DYNAMIC_ARRAY(ptr, sizeptr))
+ *     NVX_SERIALIZABLE_DYNAMIC_ARRAY(ptr, sizeptr))
  *
  *   - Статические массивы (используется макрос
- *     LIS_SERIALIZABLE_STATIC_ARRAY(ptr, size))
+ *     NVX_SERIALIZABLE_STATIC_ARRAY(ptr, size))
  *
  * Если необходимо совершить действия после сериализации или
  * десериализации, то объявляются методы класса или структуры с
@@ -536,20 +535,20 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
  * соответственно
  */
 
-#define LIS_SERIALIZABLE(...) \
+#define NVX_SERIALIZABLE(...) \
 public: \
 	template<typename Ostream> \
-	int serialize(lis::archive<Ostream> &os, bool write = true) const \
+	int serialize(nvx::archive<Ostream> &os, bool write = true) const \
 	{ \
-		int res = lis::serialize_elements( os, write, __VA_ARGS__ ); \
+		int res = nvx::serialize_elements( os, write, __VA_ARGS__ ); \
 		after_serialization(); \
 		return res; \
 	} \
  \
 	template<typename Istream> \
-	int deserialize(lis::archive<Istream> &is) \
+	int deserialize(nvx::archive<Istream> &is) \
 	{ \
-		int res = lis::deserialize_elements( is, __VA_ARGS__ ); \
+		int res = nvx::deserialize_elements( is, __VA_ARGS__ ); \
 		after_deserialization(); \
 		return res; \
 	} 
@@ -558,20 +557,20 @@ public: \
  * Используется этот макрос, если структура данных является 
  * плоской
  */
-#define LIS_SERIALIZABLE_PLAIN() \
+#define NVX_SERIALIZABLE_PLAIN() \
 public: \
 	template<class Ostream> \
-	inline int serialize(lis::archive<Ostream> &os, bool write = true) const \
+	inline int serialize(nvx::archive<Ostream> &os, bool write = true) const \
 	{ \
-		int res = lis::serialize_plain(os, (void const *)this, sizeof(*this), write); \
+		int res = nvx::serialize_plain(os, (void const *)this, sizeof(*this), write); \
 		after_serialization(); \
 		return res; \
 	} \
  \
 	template<class Istream> \
-	inline int deserialize(lis::archive<Istream> &is) \
+	inline int deserialize(nvx::archive<Istream> &is) \
 	{ \
-		int res = lis::deserialize_plain(is, (void *)this, sizeof *this); \
+		int res = nvx::deserialize_plain(is, (void *)this, sizeof *this); \
 		after_deserialization(); \
 		return res; \
 	}
@@ -1614,7 +1613,7 @@ int deserialize(
 
 /* DEFINITIONS */
 /*
- * autor:   lis
+ * autor:   nvx
  * created: Oct  5 14:14:45 2020
  */
 
@@ -2865,7 +2864,7 @@ int deserialize(
 
 struct _LiraPlace
 {
-	LIS_SERIALIZABLE_PLAIN();
+	NVX_SERIALIZABLE_PLAIN();
 
 	int p; // pos
 	int s; // size
@@ -2881,7 +2880,7 @@ struct _LiraObject
 {
 	typedef Meta meta_t;
 
-	LIS_SERIALIZABLE(&pl, &cat, &pc, &meta);
+	NVX_SERIALIZABLE(&pl, &cat, &pc, &meta);
 
 	_LiraPlace pl;
 	int cat; // category
@@ -2893,7 +2892,7 @@ struct _LiraObject
 template<>
 struct _LiraObject<void>
 {
-	LIS_SERIALIZABLE_PLAIN();
+	NVX_SERIALIZABLE_PLAIN();
 
 	_LiraPlace pl;
 	int cat;
@@ -3472,4 +3471,4 @@ private:
 
 
 
-#endif // LIS_SERIALIZATION_HPP
+#endif // NVX_SERIALIZATION_HPP
