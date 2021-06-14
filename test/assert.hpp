@@ -11,6 +11,7 @@
 #include <unordered_set>
 
 #include <nvx/iostream.hpp>
+#include <nvx/mescal.hpp>
 
 
 
@@ -26,6 +27,24 @@ bool is_equal(T const &lhs, U const &rhs, char const *err, bool silent = false)
 	if (lhs != rhs)
 	{
 		std::cerr << "lhs: " << lhs << ", " << rhs << '\n';
+		throw err;
+	}
+	return true;
+}
+
+inline bool is_equal(
+	std::wstring const &lhs,
+	std::wstring const &rhs,
+	char const *err,
+	bool silent = false
+)
+{
+	if (silent)
+		return lhs == rhs;
+
+	if (lhs != rhs)
+	{
+		// std::wcerr << "lhs: " << ws2s(lhs) << ", " << ws2s(rhs) << '\n';
 		throw err;
 	}
 	return true;

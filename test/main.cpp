@@ -226,12 +226,54 @@ bool std_containers()
 
 
 
+bool strings()
+{
+	string s,  sr;
+	wstring ws, wsr;
+
+	for (int i = 0; i < 100; ++i)
+	{
+		stringstream ss;
+
+		s  = "";
+		ws = L"";
+
+		for (int i = 0, e = disI(10, 100)(dre); i != e; ++i)
+			s.push_back(uidis_t<char>(char_min, char_max)(dre));
+
+		for (int i = 0, e = disI(10, 100)(dre); i != e; ++i)
+			ws.push_back(uidis_t<wchar_t>(
+				numeric_limits<wchar_t>::min(),
+				numeric_limits<wchar_t>::max()
+			)(dre));
+
+		archive(&ss) << &s  << &ws;
+		archive(&ss) >> &sr >> &wsr;
+
+		try
+		{
+			is_equal(s, sr, "s != sr");
+			is_equal(ws, wsr, "ws != wsr");
+		}
+		catch(char const *err)
+		{
+			fprintf(stderr, "%s\n", err);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
 // main
 int main( int argc, char *argv[] )
 {
 	auto tests = {
 		make_pair(&primitive_types, "primitive_types"),
 		make_pair(&std_containers,  "std_containers"),
+		make_pair(&strings,         "strings"),
 	};
 
 	int success = 0;
