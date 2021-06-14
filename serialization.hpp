@@ -406,7 +406,7 @@ inline int serialize_elements(
 	Args...args
 )
 {
-	return serialize(os, arr.ptr, arr.size, write) +
+	return serialize_array(os, arr.ptr, arr.size, write) +
 		   serialize_elements(os, write, args...);
 }
 
@@ -455,7 +455,7 @@ inline int deserialize_elements(
 	Args...args
 )
 {
-	return deserialize(is, arr.ptr, arr.size) +
+	return deserialize_array(is, arr.ptr, arr.size) +
 		   deserialize_elements(is, args...);
 }
 
@@ -695,7 +695,7 @@ int deserialize(archive<Istream, Meta> &is, T *value);
  * \return Число байт, которое было записано (или требуемое для этого)
  */
 template<class Ostream, typename Meta, typename T>
-int serialize(
+int serialize_array(
 	archive<Ostream, Meta> &os,
 	T const * const *value,
 	int const *size,
@@ -716,7 +716,7 @@ int serialize(
  * \return Число байт, которое было записано (или требуемое для этого)
  */
 template<class Istream, typename Meta, typename T>
-int deserialize(
+int deserialize_array(
 	archive<Istream, Meta> &is,
 	T **value,
 	int *size
@@ -847,7 +847,7 @@ int deserialize(
  * \return Число сериализованных байт
  */
 template<typename T>
-int serialize(
+int serialize_array(
 	std::string &src,
 	T const * const *value,
 	int const *size,
@@ -866,7 +866,7 @@ int serialize(
  * \return Строку, в которую произвелась сериализация массива
  */
 template<typename T>
-std::string serialize(
+std::string serialize_array(
 	T const * const *value,
 	int const *size,
 	int mode = ArchiveMode::determine_shared_mode
@@ -885,7 +885,7 @@ std::string serialize(
  * \return Число десериализованных байт
  */
 template<typename T>
-int deserialize(
+int deserialize_array(
 	std::string const &src,
 	T **value, 
 	int *size,
@@ -905,7 +905,7 @@ int deserialize(
  * \return Число десериализованных байт
  */
 template<typename T>
-int deserialize(
+int deserialize_array(
 	std::string &&src,
 	T **value,
 	int *size,
@@ -1693,7 +1693,7 @@ int deserialize( std::string &&src, T *value, int mode )
 
 // to string dynamic array
 template<typename T>
-int serialize(
+int serialize_array(
 	std::string &src,
 	T const * const *value,
 	int const *size,
@@ -1709,7 +1709,7 @@ int serialize(
 }
 
 template<typename T>
-std::string serialize(
+std::string serialize_array(
 	T const * const *value,
 	int const *size,
 	int mode
@@ -1724,7 +1724,7 @@ std::string serialize(
 
 
 template<typename T>
-int deserialize(
+int deserialize_array(
 	std::string const &src,
 	T **value, 
 	int *size,
@@ -1738,7 +1738,7 @@ int deserialize(
 }
 
 template<typename T>
-int deserialize(
+int deserialize_array(
 	std::string &&src,
 	T **value,
 	int *size,
@@ -1819,7 +1819,7 @@ int deserialize_static(
 
 // dynamic arrays
 template<class Ostream, typename Meta, typename T>
-int serialize(
+int serialize_array(
 	archive<Ostream, Meta> &os,
 	T const * const *value,
 	int const *size,
@@ -1838,7 +1838,7 @@ int serialize(
 }
 
 template<class Istream, typename Meta, typename T>
-int deserialize(
+int deserialize_array(
 	archive<Istream, Meta> &is,
 	T **value,
 	int *sizeptr 

@@ -105,7 +105,7 @@ bool primitive_types()
 			is_equal(doubleval,  doublevalr,  (char const *)"Equal fail: doubleval != doublevalr");
 			is_equal(ldoubleval, ldoublevalr, (char const *)"Equal fail: ldoubleval != ldoublevalr");
 		}
-		catch(char const *err)
+		catch (char const *err)
 		{
 			fprintf(stderr, "%s\n", err);
 			return false;
@@ -193,7 +193,7 @@ bool pointers_to_primitive_types()
 			is_equal(*doubleval,  *doublevalr,  "Equal fail: doubleval != doublevalr");
 			is_equal(*ldoubleval, *ldoublevalr, "Equal fail: ldoubleval != ldoublevalr");
 		}
-		catch(char const *err)
+		catch (char const *err)
 		{
 			fprintf(stderr, "%s\n", err);
 			ret = false;
@@ -228,6 +228,68 @@ bool pointers_to_primitive_types()
 		if (!ret)
 			return false;
 	}
+
+	return true;
+}
+
+bool arrays_and_plain()
+{
+	bool ret = true;
+
+	int    stat[100], statr[100];
+	int    *dyn,      *dynr;
+	double *plain,    *plainr;
+
+	for (int _ = 0; _ < 100; ++_)
+	{
+		stringstream ss;
+
+		int arrsize = disI(5, 100)(dre), arrsizer;
+		int plainsize = disI(5, 100)(dre);
+
+		dyn    = new int[arrsize];
+		plain  = new double[plainsize];
+		plainr = new double[plainsize];
+
+		for (int i = 0; i < arrsize; ++i)
+			dyn[i] = disI(int_min, int_max)(dre);
+
+		for (int i = 0; i < plainsize; ++i)
+			plain[i] = disD()(dre);
+
+		for (int i = 0; i < 100; ++i)
+			stat[i] = disI(int_min, int_max)(dre);
+
+		archive arch(&ss);
+		serialize_array(arch,  &dyn,  &arrsize);
+		serialize_static(arch, stat,  100);
+		serialize_plain(arch,  plain, sizeof(double) * plainsize);
+
+		deserialize_array(arch,  &dynr,  &arrsizer);
+		deserialize_static(arch, statr,  100);
+		deserialize_plain(arch,  plainr, sizeof(double) * plainsize);
+
+		try
+		{
+			is_equal(dyn,   dyn+arrsize,     dynr,   dynr+arrsizer,    "dyn != dynr");
+			is_equal(stat,  stat+100,        statr,  statr+100,        "stat != statr");
+			is_equal(plain, plain+plainsize, plainr, plainr+plainsize, "plain != plainr");
+		}
+		catch (char const *err)
+		{
+			fprintf(stderr, "%s\n", err);
+			ret = false;
+		}
+
+		delete[] dyn;
+		delete[] dynr;
+		delete[] plain;
+		delete[] plainr;
+
+		if (!ret)
+			return false;
+	}
+
 
 	return true;
 }
@@ -321,18 +383,18 @@ bool std_containers()
 
 	try
 	{
-		is_equal(vector, vectorr, "Error: vector != vectorr");
-		is_equal(list, listr, "Error: list != listr");
-		is_equal(set, setr, "Error: set != setr");
-		is_equal(multiset, multisetr, "Error: multiset != multisetr");
-		is_equal(unordered_set, unordered_setr, "Error: unordered_set != unordered_setr");
+		is_equal(vector,             vectorr,             "Error: vector != vectorr");
+		is_equal(list,               listr,               "Error: list != listr");
+		is_equal(set,                setr,                "Error: set != setr");
+		is_equal(multiset,           multisetr,           "Error: multiset != multisetr");
+		is_equal(unordered_set,      unordered_setr,      "Error: unordered_set != unordered_setr");
 		is_equal(unordered_multiset, unordered_multisetr, "Error: unordered_multiset != unordered_multisetr");
-		is_equal(map, mapr, "Error: map != mapr");
-		is_equal(multimap, multimapr, "Error: multimap != multimapr");
-		is_equal(unordered_map, unordered_mapr, "Error: unordered_map != unordered_mapr");
+		is_equal(map,                mapr,                "Error: map != mapr");
+		is_equal(multimap,           multimapr,           "Error: multimap != multimapr");
+		is_equal(unordered_map,      unordered_mapr,      "Error: unordered_map != unordered_mapr");
 		is_equal(unordered_multimap, unordered_multimapr, "Error: unordered_multimap != unordered_multimapr");
 	}
-	catch(char const *err)
+	catch (char const *err)
 	{
 		fprintf(stderr, "%s\n", err);
 		return false;
@@ -372,7 +434,7 @@ bool strings()
 			is_equal(s, sr, "s != sr");
 			is_equal(ws, wsr, "ws != wsr");
 		}
-		catch(char const *err)
+		catch (char const *err)
 		{
 			fprintf(stderr, "%s\n", err);
 			return false;
@@ -390,6 +452,7 @@ int main( int argc, char *argv[] )
 	auto tests = {
 		make_pair(&primitive_types,             "primitive_types"),
 		make_pair(&pointers_to_primitive_types, "pointers_to_primitive_types"),
+		make_pair(&arrays_and_plain,            "arrays_and_plain"),
 		make_pair(&std_containers,              "std_containers"),
 		make_pair(&strings,                     "strings"),
 	};
