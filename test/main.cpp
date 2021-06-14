@@ -4,6 +4,8 @@
 #include <nvx/random.hpp>
 #include <nvx/type.hpp>
 
+#include "assert.hpp"
+
 #include "../serialization.hpp"
 
 
@@ -21,17 +23,6 @@ dre_t dre = create_dre();
 
 
 
-/********************* ASSERT FUNCTIONS *********************/
-template<typename T, typename U>
-void is_equal(T const &lhs, U const &rhs, char const *err)
-{
-	if (lhs != rhs)
-	{
-		cerr << "lhs: " << lhs << ", " << rhs << endl;
-		throw err;
-	}
-	return;
-}
 
 
 

@@ -22,7 +22,7 @@ rerun: clean run
 main: main.o
 	g++ $(LDFLAGS) -o main main.o $(LIBS)
 
-main.o: main.cpp
+main.o: main.cpp assert.hpp
 	g++ $(CFLAGS) -o main.o main.cpp
 
 
