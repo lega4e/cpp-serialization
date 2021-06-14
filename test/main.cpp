@@ -117,6 +117,113 @@ bool primitive_types()
 
 
 
+template<class Container>
+void push_random_ivalues(Container &cont, disI dis, int count)
+{
+	for (int i = 0; i < count; ++i)
+		cont.push_back(dis(dre));
+	return;
+}
+
+template<class Container>
+void insert_random_ivalues(Container &cont, disI dis, int count)
+{
+	for (int i = 0; i < count; ++i)
+		cont.insert(dis(dre));
+	return;
+}
+
+template<class Container>
+void push_random_pair_ivalues(Container &cont, disI dis, int count)
+{
+	for (int i = 0; i < count; ++i)
+		cont.push( pair<int, int>{dis(dre), dis(dre)} );
+	return;
+}
+
+template<class Container>
+void insert_random_pair_ivalues(Container &cont, disI dis, int count)
+{
+	for (int i = 0; i < count; ++i)
+		cont.insert( pair<int, int>{dis(dre), dis(dre)} );
+	return;
+}
+
+bool std_containers()
+{
+	vector<int>                  vector,             vectorr;
+	list<int>                    list,               listr;
+	set<int>                     set,                setr;
+	multiset<int>                multiset,           multisetr;
+	unordered_set<int>           unordered_set,      unordered_setr;
+	unordered_multiset<int>      unordered_multiset, unordered_multisetr;
+	map<int, int>                map,                mapr;
+	multimap<int, int>           multimap,           multimapr;
+	unordered_map<int, int>      unordered_map,      unordered_mapr;
+	unordered_multimap<int, int> unordered_multimap, unordered_multimapr;
+
+	disI dis(int_min, int_max);
+	disI sizedis(1, 100);
+
+	push_random_ivalues(        vector,             dis, sizedis(dre) );
+	push_random_ivalues(        list,               dis, sizedis(dre) );
+	insert_random_ivalues(      set,                dis, sizedis(dre) );
+	insert_random_ivalues(      multiset,           dis, sizedis(dre) );
+	insert_random_ivalues(      unordered_set,      dis, sizedis(dre) );
+	insert_random_ivalues(      unordered_multiset, dis, sizedis(dre) );
+	insert_random_pair_ivalues( map,                dis, sizedis(dre) );
+	insert_random_pair_ivalues( multimap,           dis, sizedis(dre) );
+	insert_random_pair_ivalues( unordered_map,      dis, sizedis(dre) );
+	insert_random_pair_ivalues( unordered_multimap, dis, sizedis(dre) );
+
+	stringstream ss;
+
+	archive(&ss) <<
+		&vector <<
+		&list <<
+		&set <<
+		&multiset <<
+		&unordered_set <<
+		&unordered_multiset <<
+		&map <<
+		&multimap <<
+		&unordered_map <<
+		&unordered_multimap;
+
+	archive(&ss) >>
+		&vectorr >>
+		&listr >>
+		&setr >>
+		&multisetr >>
+		&unordered_setr >>
+		&unordered_multisetr >>
+		&mapr >>
+		&multimapr >>
+		&unordered_mapr >>
+		&unordered_multimapr;
+
+	try
+	{
+		is_equal(vector, vectorr, "Error: vector != vectorr");
+		is_equal(list, listr, "Error: list != listr");
+		is_equal(set, setr, "Error: set != setr");
+		is_equal(multiset, multisetr, "Error: multiset != multisetr");
+		is_equal(unordered_set, unordered_setr, "Error: unordered_set != unordered_setr");
+		is_equal(unordered_multiset, unordered_multisetr, "Error: unordered_multiset != unordered_multisetr");
+		is_equal(map, mapr, "Error: map != mapr");
+		is_equal(multimap, multimapr, "Error: multimap != multimapr");
+		is_equal(unordered_map, unordered_mapr, "Error: unordered_map != unordered_mapr");
+		is_equal(unordered_multimap, unordered_multimapr, "Error: unordered_multimap != unordered_multimapr");
+	}
+	catch(char const *err)
+	{
+		fprintf(stderr, "%s\n", err);
+		return false;
+	}
+
+	return true;
+}
+
 
 
 // main
@@ -124,6 +231,7 @@ int main( int argc, char *argv[] )
 {
 	auto tests = {
 		make_pair(&primitive_types, "primitive_types"),
+		make_pair(&std_containers,  "std_containers"),
 	};
 
 	int success = 0;
