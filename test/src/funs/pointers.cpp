@@ -6,10 +6,10 @@
 #include <nvx/random.hpp>
 #include <nvx/type.hpp>
 
-#include "assert.hpp"
-#include "random_values.hpp"
+#include <assert.hpp>
+#include <random_value.hpp>
 
-#include "../../serialization.hpp"
+#include <serialization.hpp>
 
 
 using namespace nvx;

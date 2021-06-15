@@ -4,7 +4,7 @@
 #include <nvx/random.hpp>
 #include <nvx/type.hpp>
 
-#include "test_functions.hpp"
+#include "funs/all.hpp"
 
 
 using namespace nvx;
