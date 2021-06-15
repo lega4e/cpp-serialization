@@ -31,24 +31,28 @@ struct Plain
 	NVX_SERIALIZABLE_PLAIN();
 };
 
-template<>
-bool is_equal(Plain const &lhs, Plain const &rhs, char const *err, bool silent)
+namespace nvx
 {
-	return
-		is_equal(lhs.a, rhs.a, err, silent) &&
-		is_equal(lhs.b, rhs.b, err, silent) &&
-		is_equal(lhs.c, rhs.c, err, silent);
+	template<>
+	bool is_equal(Plain const &lhs, Plain const &rhs, char const *err, bool silent)
+	{
+		return
+			is_equal(lhs.a, rhs.a, err, silent) &&
+			is_equal(lhs.b, rhs.b, err, silent) &&
+			is_equal(lhs.c, rhs.c, err, silent);
+	}
+
+	template<>
+	Plain random_value<Plain>()
+	{
+		return {
+			random_value<int>(),
+			random_value<int>(),
+			random_value<int>()
+		};
+	}
 }
 
-template<>
-Plain random_value<Plain>()
-{
-	return {
-		random_value<int>(),
-		random_value<int>(),
-		random_value<int>()
-	};
-}
 
 template<class Ostream>
 inline Ostream &operator<<( Ostream &os, Plain const &toprint )
@@ -81,41 +85,45 @@ struct NoPlain
 	);
 };
 
-template<>
-bool is_equal(NoPlain const &lhs, NoPlain const &rhs, char const *err, bool silent)
+
+namespace nvx
 {
-	return
-		is_equal(lhs.stat,   lhs.stat+16,         rhs.stat,   rhs.stat+16,         err, silent) &&
-		is_equal(lhs.dyn,    lhs.dyn+lhs.n,       rhs.dyn,    rhs.dyn+rhs.n,       err, silent) &&
-		is_equal(lhs.dynvec, lhs.dynvec+lhs.vecn, rhs.dynvec, rhs.dynvec+rhs.vecn, err, silent) &&
-		is_equal(lhs.a,   rhs.a,   err, silent) &&
-		is_equal(lhs.a,   rhs.a,   err, silent) &&
-		is_equal(lhs.b,   rhs.b,   err, silent) &&
-		is_equal(lhs.c,   rhs.c,   err, silent) &&
-		is_equal(lhs.s,   rhs.s,   err, silent) &&
-		is_equal(lhs.vec, rhs.vec, err, silent) &&
-		is_equal(lhs.map, rhs.map, err, silent);
-}
+	template<>
+	bool is_equal(NoPlain const &lhs, NoPlain const &rhs, char const *err, bool silent)
+	{
+		return
+			is_equal(lhs.stat,   lhs.stat+16,         rhs.stat,   rhs.stat+16,         err, silent) &&
+			is_equal(lhs.dyn,    lhs.dyn+lhs.n,       rhs.dyn,    rhs.dyn+rhs.n,       err, silent) &&
+			is_equal(lhs.dynvec, lhs.dynvec+lhs.vecn, rhs.dynvec, rhs.dynvec+rhs.vecn, err, silent) &&
+			is_equal(lhs.a,   rhs.a,   err, silent) &&
+			is_equal(lhs.a,   rhs.a,   err, silent) &&
+			is_equal(lhs.b,   rhs.b,   err, silent) &&
+			is_equal(lhs.c,   rhs.c,   err, silent) &&
+			is_equal(lhs.s,   rhs.s,   err, silent) &&
+			is_equal(lhs.vec, rhs.vec, err, silent) &&
+			is_equal(lhs.map, rhs.map, err, silent);
+	}
 
-template<>
-NoPlain random_value<NoPlain>()
-{
-	NoPlain s;
+	template<>
+		NoPlain random_value<NoPlain>()
+		{
+			NoPlain s;
 
-	randomize(s.stat, s.stat+16);
-	randomize(s.a);
-	randomize(s.b);
-	randomize(s.c);
-	s.dyn = random_array<int>(s.n);
-	randomize(s.dyn, s.dyn + s.n);
-	randomize(s.s);
-	randomize(s.vec);
-	s.dynvec = random_array<vector<vector<int>>>(s.vecn);
-	randomize(s.dynvec, s.dynvec+s.vecn);
-	randomize(s.map);
+			randomize(s.stat, s.stat+16);
+			randomize(s.a);
+			randomize(s.b);
+			randomize(s.c);
+			s.dyn = random_array<int>(s.n);
+			randomize(s.dyn, s.dyn + s.n);
+			randomize(s.s);
+			randomize(s.vec);
+			s.dynvec = random_array<vector<vector<int>>>(s.vecn);
+			randomize(s.dynvec, s.dynvec+s.vecn);
+			randomize(s.map);
 
-	return s;
-}
+			return s;
+		}
+	}
 
 template<class Ostream>
 inline Ostream &operator<<( Ostream &os, NoPlain const &toprint )

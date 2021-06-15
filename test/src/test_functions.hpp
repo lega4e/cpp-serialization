@@ -11,6 +11,7 @@ bool arrays_and_plain();
 bool std_containers();
 bool strings();
 bool user_structs();
+bool pointers();
 
 
 

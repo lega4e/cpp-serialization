@@ -31,6 +31,7 @@ int main( int argc, char *argv[] )
 		make_pair(&std_containers,              "std_containers"),
 		make_pair(&strings,                     "strings"),
 		make_pair(&user_structs,                "user_structs"),
+		make_pair(&pointers,                    "pointers"),
 	};
 
 	int success = 0;

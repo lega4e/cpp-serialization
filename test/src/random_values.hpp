@@ -19,13 +19,22 @@
 
 namespace nvx
 {
-	constexpr int const MIN_COUNT = 2;
-	constexpr int const MAX_COUNT = 5;
 
-	template<typename T, bool IsInt, bool IsFloat, bool IsPoitner>
-	struct _random_dispatcher;
-}
 
+
+
+
+constexpr int const MIN_COUNT = 2;
+constexpr int const MAX_COUNT = 5;
+
+template<typename T, bool IsInt, bool IsFloat, bool IsPoitner>
+struct _random_dispatcher;
+
+
+
+
+
+/*********************** MAIN FUNCTION **********************/
 template<
 	typename T,
 	typename TNOREF = typename std::remove_reference<T>::type,
@@ -39,7 +48,6 @@ TNOREF random_value()
 		TNOREF, IsInt, IsFloat, IsPointer
 	>::_random();
 }
-
 
 
 
@@ -72,13 +80,6 @@ inline std::wstring random_value<std::wstring>()
 
 	return s;
 }
-
-
-
-
-
-namespace nvx
-{
 
 
 template<typename Iterator>

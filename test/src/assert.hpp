@@ -1,5 +1,5 @@
-#ifndef ASSERT_HPP_89732
-#define ASSERT_HPP_89732
+#ifndef NVX_ASSERT_HPP_89732
+#define NVX_ASSERT_HPP_89732
 
 #include <algorithm>
 #include <iterator>
@@ -17,9 +17,16 @@
 
 
 
+namespace nvx
+{
+
+
+
+
+
 /********************* ASSERT FUNCTIONS *********************/
 template<typename T, typename U>
-bool is_equal(T const &lhs, U const &rhs, char const *err, bool silent = false)
+bool is_equal(T const &lhs, U const &rhs, char const *err = "Error", bool silent = false)
 {
 	if (silent)
 		return lhs == rhs;
@@ -32,10 +39,11 @@ bool is_equal(T const &lhs, U const &rhs, char const *err, bool silent = false)
 	return true;
 }
 
+
 inline bool is_equal(
 	std::wstring const &lhs,
 	std::wstring const &rhs,
-	char const *err,
+	char const *err = "Error",
 	bool silent = false
 )
 {
@@ -50,12 +58,14 @@ inline bool is_equal(
 	return true;
 }
 
+
+
 // for sequence
 template<typename IteratorLhs, typename IteratorRhs>
 bool is_equal(
 	IteratorLhs lhsbeg, IteratorLhs lhsend, 
 	IteratorRhs rhsbeg, IteratorRhs rhsend, 
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	auto lhsbegcp = lhsbeg;
@@ -88,7 +98,7 @@ template<typename T>
 bool is_equal(
 	std::vector<T> const &lhs,
 	std::vector<T> const &rhs,
-	char const *err,
+	char const *err = "Error",
 	bool silent = false
 )
 {
@@ -99,7 +109,7 @@ template<typename T>
 bool is_equal(
 	std::list<T> const &lhs,
 	std::list<T> const &rhs,
-	char const *err,
+	char const *err = "Error",
 	bool silent = false
 )
 {
@@ -110,7 +120,7 @@ template<typename T>
 bool is_equal(
 	std::set<T> const &lhs,
 	std::set<T> const &rhs,
-	char const *err,
+	char const *err = "Error",
 	bool silent = false
 )
 {
@@ -121,7 +131,7 @@ template<typename T, typename U>
 bool is_equal(
 	std::map<T, U> const &lhs,
 	std::map<T, U> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	return is_equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
@@ -131,7 +141,7 @@ template<typename T>
 bool is_equal(
 	std::multiset<T> const &lhs,
 	std::multiset<T> const &rhs,
-	char const *err,
+	char const *err = "Error",
 	bool silent = false
 )
 {
@@ -142,7 +152,7 @@ template<typename T, typename U>
 bool is_equal(
 	std::multimap<T, U> const &lhs,
 	std::multimap<T, U> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	return is_equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
@@ -152,7 +162,7 @@ template<typename T>
 bool is_equal(
 	std::unordered_set<T> const &lhs,
 	std::unordered_set<T> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	std::set<T> lhsset, rhsset;
@@ -165,7 +175,7 @@ template<typename T, typename U>
 bool is_equal(
 	std::unordered_map<T, U> const &lhs,
 	std::unordered_map<T, U> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	std::map<T, U> lhsmap, rhsmap;
@@ -178,7 +188,7 @@ template<typename T>
 bool is_equal(
 	std::unordered_multiset<T> const &lhs,
 	std::unordered_multiset<T> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	std::multiset<T> lhsmultiset, rhsmultiset;
@@ -191,13 +201,21 @@ template<typename T, typename U>
 bool is_equal(
 	std::unordered_multimap<T, U> const &lhs,
 	std::unordered_multimap<T, U> const &rhs,
-	char const *err, bool silent = false
+	char const *err = "Error", bool silent = false
 )
 {
 	std::multimap<T, U> lhsmultimap, rhsmultimap;
 	std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsmultimap, lhsmultimap.begin()));
 	std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsmultimap, rhsmultimap.begin()));
 	return is_equal(lhsmultimap, rhsmultimap, err, silent);
+}
+
+
+
+
+
+
+
 }
 
 
