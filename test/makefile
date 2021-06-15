@@ -1,6 +1,6 @@
-CFLAGS = -std=gnu++17 -c -Wall
-LDFLAGS =
-LIBS =
+cflags  := -std=gnu++17 -c -Wall
+ldflags :=
+libs    :=
 
 
 
@@ -18,20 +18,29 @@ re: clean build
 rerun: clean run
 
 
+source_dirs     := . src
+search_wildcard := $(wildcard $(addsuffix /*.cpp,$(source_dirs)))
+object_files    := $(patsubst %.cpp,%.o,$(search_wildcard))
+object_files    := $(notdir $(object_files))
+object_files    := $(addprefix target/,$(object_files))
+VPATH           := $(source_dirs)
 
-main: main.o
-	g++ $(LDFLAGS) -o main main.o $(LIBS)
+main: ./target $(object_files)
+	g++ $(ldflags) -o $@ $(object_files) $(libs)
 
-main.o: main.cpp assert.hpp
-	g++ $(CFLAGS) -o main.o main.cpp
+./target:
+	if ! [ -d ./target ]; then mkdir target; fi
 
+target/%.o: %.cpp
+	g++ $(cflags) -o $@ -MD $(addprefix -I,$(source_dirs)) $<
 
+include $(wildcard target/*.d)
 
 
 
 # clean
 clean:
-	-rm *.o main
+	-rm target/*.o main
 
 
 

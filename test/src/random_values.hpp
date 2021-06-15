@@ -13,8 +13,6 @@
 
 #include <nvx/random.hpp>
 
-#define NOREF(T) typename std::remove_reference<T>::type
-
 
 
 
@@ -49,7 +47,7 @@ TNOREF random_value()
 
 /************************** STRINGS *************************/
 template<>
-std::string random_value<std::string>()
+inline std::string random_value<std::string>()
 {
 	std::string s;
 	s.resize(nvx::disI(nvx::MIN_COUNT, nvx::MAX_COUNT)(dre));
@@ -61,7 +59,7 @@ std::string random_value<std::string>()
 }
 
 template<>
-std::wstring random_value<std::wstring>()
+inline std::wstring random_value<std::wstring>()
 {
 	std::wstring s;
 	s.resize(nvx::disI(nvx::MIN_COUNT, nvx::MAX_COUNT)(dre));

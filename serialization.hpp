@@ -90,7 +90,7 @@ template<typename T> T *R(T t)
 }
 
 /// Возвращает указатель на строковый литерал
-std::string *operator""_R(char const *s, unsigned long n)
+inline std::string *operator""_R(char const *s, unsigned long n)
 {
 	static std::string val;
 	val = s;
@@ -98,7 +98,7 @@ std::string *operator""_R(char const *s, unsigned long n)
 }
 
 /// Возвращает указатель на литерал вещественного числа
-ldouble *operator""_R(ldouble t)
+inline ldouble *operator""_R(ldouble t)
 {
 	static ldouble val;
 	val = t;
@@ -106,14 +106,14 @@ ldouble *operator""_R(ldouble t)
 }
 
 /// Возвращает указатель на литерал целого числа
-llong *operator""_R(unsigned long long t)
+inline llong *operator""_R(unsigned long long t)
 {
 	static llong val;
 	val = t;
 	return &val;
 }
 
-void open_io_file(std::fstream *stream, char const *filename)
+inline void open_io_file(std::fstream *stream, char const *filename)
 {
 	stream->open(filename, std::ios_base::in | std::ios_base::out);
 	if(stream->is_open())
@@ -129,7 +129,7 @@ void open_io_file(std::fstream *stream, char const *filename)
 	return;
 }
 
-void open_io_file(std::fstream *stream, std::string const &filename)
+inline void open_io_file(std::fstream *stream, std::string const &filename)
 {
 	return open_io_file(stream, filename.c_str());
 }
