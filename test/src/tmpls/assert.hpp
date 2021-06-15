@@ -25,6 +25,7 @@ namespace nvx
 
 
 /********************* ASSERT FUNCTIONS *********************/
+// main functions
 template<typename T, typename U>
 bool assert_eq(T const &lhs, U const &rhs, char const *err = "Error", bool silent = false)
 {
@@ -40,6 +41,8 @@ bool assert_eq(T const &lhs, U const &rhs, char const *err = "Error", bool silen
 }
 
 
+
+// for wstring
 inline bool assert_eq(
 	std::wstring const &lhs,
 	std::wstring const &rhs,
@@ -94,123 +97,72 @@ fail_label:
 
 
 
-template<typename T>
-bool assert_eq(
-	std::vector<T> const &lhs,
-	std::vector<T> const &rhs,
-	char const *err = "Error",
-	bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T>
-bool assert_eq(
-	std::list<T> const &lhs,
-	std::list<T> const &rhs,
-	char const *err = "Error",
-	bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T>
-bool assert_eq(
-	std::set<T> const &lhs,
-	std::set<T> const &rhs,
-	char const *err = "Error",
-	bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T, typename U>
-bool assert_eq(
-	std::map<T, U> const &lhs,
-	std::map<T, U> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T>
-bool assert_eq(
-	std::multiset<T> const &lhs,
-	std::multiset<T> const &rhs,
-	char const *err = "Error",
-	bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T, typename U>
-bool assert_eq(
-	std::multimap<T, U> const &lhs,
-	std::multimap<T, U> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent);
-}
-
-template<typename T>
-bool assert_eq(
-	std::unordered_set<T> const &lhs,
-	std::unordered_set<T> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	std::set<T> lhsset, rhsset;
-	std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsset, lhsset.begin()));
-	std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsset, rhsset.begin()));
-	return assert_eq(lhsset, rhsset, err, silent);
-}
-
-template<typename T, typename U>
-bool assert_eq(
-	std::unordered_map<T, U> const &lhs,
-	std::unordered_map<T, U> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	std::map<T, U> lhsmap, rhsmap;
-	std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsmap, lhsmap.begin()));
-	std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsmap, rhsmap.begin()));
-	return assert_eq(lhsmap, rhsmap, err, silent);
-}
-
-template<typename T>
-bool assert_eq(
-	std::unordered_multiset<T> const &lhs,
-	std::unordered_multiset<T> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	std::multiset<T> lhsmultiset, rhsmultiset;
-	std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsmultiset, lhsmultiset.begin()));
-	std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsmultiset, rhsmultiset.begin()));
-	return assert_eq(lhsmultiset, rhsmultiset, err, silent);
-}
-
-template<typename T, typename U>
-bool assert_eq(
-	std::unordered_multimap<T, U> const &lhs,
-	std::unordered_multimap<T, U> const &rhs,
-	char const *err = "Error", bool silent = false
-)
-{
-	std::multimap<T, U> lhsmultimap, rhsmultimap;
-	std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsmultimap, lhsmultimap.begin()));
-	std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsmultimap, rhsmultimap.begin()));
-	return assert_eq(lhsmultimap, rhsmultimap, err, silent);
-}
 
 
+/******************* STANDART CONTAINUERS *******************/
+/*
+ * .begin(), .end()
+ */
+#define _NVX_ASSERT_EQ_SEQUENCES(seqname) \
+	template<typename...Types, typename...Types2> \
+	bool assert_eq( \
+		seqname<Types...>  const &lhs, \
+		seqname<Types2...> const &rhs, \
+		char const *err = "Error", \
+		bool silent = false \
+	) \
+	{ \
+		return assert_eq(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), err, silent); \
+	}
+
+
+/*
+ * .begin(), .end(), .insert()
+ */
+#define _NVX_ASSERT_EQ_UNORDERED_SEQUENCE_ONE_TARG(unord_name, ord_name) \
+	template<typename T, typename...Other> \
+	bool assert_eq( \
+		unord_name<T, Other...> const &lhs, \
+		unord_name<T, Other...> const &rhs, \
+		char const *err = "Error", \
+		bool silent = false \
+	) \
+	{ \
+		ord_name<T> lhsset, rhsset; \
+		std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsset, lhsset.begin())); \
+		std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsset, rhsset.begin())); \
+		return assert_eq(lhsset, rhsset, err, silent); \
+	}
+
+#define _NVX_ASSERT_EQ_UNORDERED_SEQUENCE_TWO_TARGS(unord_name, ord_name) \
+	template<typename T, typename U, typename...Other> \
+	bool assert_eq( \
+		unord_name<T, U, Other...> const &lhs, \
+		unord_name<T, U, Other...> const &rhs, \
+		char const *err = "Error", \
+		bool silent = false \
+	) \
+	{ \
+		ord_name<T, U> lhsset, rhsset; \
+		std::copy(lhs.begin(), lhs.end(), std::insert_iterator(lhsset, lhsset.begin())); \
+		std::copy(rhs.begin(), rhs.end(), std::insert_iterator(rhsset, rhsset.begin())); \
+		return assert_eq(lhsset, rhsset, err, silent); \
+	}
+
+
+
+_NVX_ASSERT_EQ_SEQUENCES(std::vector);
+_NVX_ASSERT_EQ_SEQUENCES(std::list);
+
+_NVX_ASSERT_EQ_SEQUENCES(std::set);
+_NVX_ASSERT_EQ_SEQUENCES(std::map);
+_NVX_ASSERT_EQ_SEQUENCES(std::multiset);
+_NVX_ASSERT_EQ_SEQUENCES(std::multimap);
+
+_NVX_ASSERT_EQ_UNORDERED_SEQUENCE_ONE_TARG(std::unordered_set,       std::set);
+_NVX_ASSERT_EQ_UNORDERED_SEQUENCE_ONE_TARG(std::unordered_multiset,  std::multiset);
+_NVX_ASSERT_EQ_UNORDERED_SEQUENCE_TWO_TARGS(std::unordered_map,      std::map);
+_NVX_ASSERT_EQ_UNORDERED_SEQUENCE_TWO_TARGS(std::unordered_multimap, std::multimap);
 
 
 

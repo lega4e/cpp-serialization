@@ -140,7 +140,12 @@ inline void open_io_file(std::fstream *stream, std::string const &filename)
 
 
 
-/* TYPES */
+
+
+
+
+
+/* ARCHIVE */
 typedef int32_t id_t;
 constexpr id_t NULL_ID = std::numeric_limits<id_t>::min();
 
@@ -172,8 +177,6 @@ enum ArchiveMode
 	 */
 	determine_shared_mode   = 1 << 1
 };
-
-
 
 
 
@@ -350,7 +353,13 @@ private:
 
 
 
+
+
+
+
+
 /* MACROS */
+/********************** HELP FOR MACROS *********************/
 /*
  * Следующие структуры и функции обспечивают работу
  * макросов, которые включаются внутрь сериализуемых
@@ -480,6 +489,7 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
 
 
 
+/************************** ARRAYS **************************/
 /*!
  * Макросы для сериализации динамических и статических массив;
  * в макросы передаются два параметра: массив и размер; существуют
@@ -515,6 +525,8 @@ inline int deserialize_elements(archive<Istream> &is, Head head, Args...args)
 	}
 
 
+
+/************************* IN-STRUCT ************************/
 /*!
  * Эти макросы используется в теле класса или структуры, чтобы
  * сделать его сериализуемым; в качестве аргументов укызавыается:
@@ -574,6 +586,95 @@ public: \
 		after_deserialization(); \
 		return res; \
 	}
+
+
+
+
+
+/************************ CONTAINERS ************************/
+// DECLARATIONS
+#define _NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
+	template< \
+		class Ostream, \
+		typename Meta, \
+		typename...Other \
+	> \
+	int serialize( \
+		archive<Ostream, Meta> &os, \
+		contname<Other...> const *cont, \
+
+#define _NVX_SERIALIZE_CONTAINER_DECLARE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
+		bool write = true \
+	)
+
+#define _NVX_SERIALIZE_CONTAINER_DECLARE_NODARG(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
+		bool write \
+	)
+
+
+#define _NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname) \
+	template< \
+		class Istream, \
+		typename Meta, \
+		typename...Other \
+	> \
+	int deserialize( \
+		archive<Istream, Meta> &is, \
+		contname<Other...> *cont  \
+	)
+
+#define _NVX_DESERIALIZE_INSERTED_CONTAINER_DECLARE(contname) \
+	template< \
+		class Istream, \
+		typename Meta, \
+		typename...Other \
+	> \
+	int deserialize( \
+		archive<Istream, Meta> &is, \
+		contname<Other...> *cont  \
+	) \
+
+
+
+// DEFINITIONS
+#define _NVX_SERIALIZE_CONTAINER_DEFINE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_NODARG(contname) \
+	{ return nvx::serialize_container(os, cont, write); }
+
+#define _NVX_DESERIALIZE_RESIZABLE_CONTAINER_DEFINE(contname) \
+	_NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname) \
+	{ return nvx::deserialize_resizable_container(is, cont); }
+ 
+#define _NVX_DESERIALIZE_INSERTED_CONTAINER_DEFINE(contname) \
+	_NVX_DESERIALIZE_INSERTED_CONTAINER_DECLARE(contname) \
+	{ return nvx::deserialize_inserted_container(is, cont); }
+
+
+
+// SERIALIZATION + DESERIALIZATION
+#define _NVX_SERIALIZABLE_RESIZABLE_CONTANER_DECLARE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE(contname); \
+	_NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname);
+
+#define _NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE(contname); \
+	_NVX_DESERIALIZE_INSERTED_CONTAINER_DECLARE(contname);
+
+
+#define _NVX_SERIALIZABLE_RESIZABLE_CONTANER_DEFINE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DEFINE(contname); \
+	_NVX_DESERIALIZE_RESIZABLE_CONTAINER_DEFINE(contname);
+
+#define _NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(contname) \
+	_NVX_SERIALIZE_CONTAINER_DEFINE(contname); \
+	_NVX_DESERIALIZE_INSERTED_CONTAINER_DEFINE(contname);
+
+
+
+
+
 
 
 
@@ -680,7 +781,9 @@ int deserialize(archive<Istream, Meta> &is, T *value);
 
 
 
-// dynamic array
+
+
+/*************** ARRAY AND PLAIN SERIALIZATION **************/
 /// Архивная функция сериализации динамического массива
 /*!
  * Сериализует динамический массив в архив.
@@ -762,7 +865,9 @@ int deserialize_plain(
 
 
 
-// to string
+
+
+/****************** SERIALIZATION TO STRING *****************/
 /*!
  * \defgroup string_serialization Строковые функции
  * \ingroup serialization_functions
@@ -998,39 +1103,6 @@ int deserialize_static(
 
 
 
-
-
-
-
-
-// string
-template<
-	class Ostream, 
-	typename Meta,
-	typename CharType,
-	class CharTraitsType,
-	class Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::basic_string<CharType, CharTraitsType, Alloc> const *str,
-	bool write = true
-);
-
-template<
-	class Istream, 
-	typename Meta,
-	typename CharType,
-	class CharTraitsType,
-	class Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::basic_string<CharType, CharTraitsType, Alloc> *str 
-);
-
-
-
 // final
 template<class Ostream, typename Meta, typename T>
 int _serialize_final(
@@ -1049,6 +1121,7 @@ int _deserialize_final(
 
 
 
+/****************** POINTERS SERIALIZATION ******************/
 /*!
  * \defgroup pointers_serialization Сериализация указателей
  * \ingroup serialization_functions
@@ -1163,8 +1236,8 @@ int deserialize(
 
 
 
+/************************ STD-STRUCTS ***********************/
 /* STD-STRUCTS */
-
 /*!
  * \defgroup std_serialization Стандартные контейнеры и структуры 
  * \ingroup serialization_functions
@@ -1302,305 +1375,20 @@ int deserialize_inserted_container(
 
 
 
-/// Сериализация std::vector
-template<
-	class Ostream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::vector<T, Alloc> const *cont,
-	bool write = true
-);
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DECLARE(std::basic_string);
 
-/// Десериализация std::vector
-template<
-	class Istream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::vector<T, Alloc> *cont 
-);
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DECLARE(std::vector);
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DECLARE(std::list);
 
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::set);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::map);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::multiset);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::multimap);
 
-
-/// Сериализация std::list
-template<
-	class Ostream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::list<T, Alloc> const *list,
-	bool write = true
-);
-
-/// Десериализация std::list
-template<
-	class Istream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::list<T, Alloc> *list 
-);
-
-
-
-/// Сериализация std::set
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::set<Key, Compare, Alloc> const *set,
-	bool write = true
-);
-
-/// Десериализация std::set
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::set<Key, Compare, Alloc> *set 
-);
-
-
-
-/// Сериализация std::multiset
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::multiset<Key, Compare, Alloc> const *set,
-	bool write = true
-);
-
-/// Десериализация std::multiset
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::multiset<Key, Compare, Alloc> *set 
-);
-
-
-
-/// Сериализация std::unordered_set
-template<
-	class Ostream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_set<Value, Hash, Pred, Alloc> const *set,
-	bool write = true
-);
-
-/// Десериализация std::unordered_set
-template<
-	class Istream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_set<Value, Hash, Pred, Alloc> *set 
-);
-
-
-
-/// Сериализация std::unordered_multiset
-template<
-	class Ostream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_multiset<Value, Hash, Pred, Alloc> const *set,
-	bool write = true
-);
-
-/// Десериализация std::unordered_multiset
-template<
-	class Istream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_multiset<Value, Hash, Pred, Alloc> *set 
-);
-
-
-
-/// Сериализация std::map
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::map<Key, T, Compare, Alloc> const *map,
-	bool write = true
-);
-
-/// Десериализация std::map
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::map<Key, T, Compare, Alloc> *map 
-);
-
-
-
-/// Сериализация std::multimap
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::multimap<Key, T, Compare, Alloc> const *map,
-	bool write = true
-);
-
-/// Десериализация std::multimap
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::multimap<Key, T, Compare, Alloc> *map 
-);
-
-
-
-/// Сериализация std::unordered_map
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_map<Key, T, Hash, Pred, Alloc> const *map,
-	bool write = true
-);
-
-/// Десериализация std::unordered_map
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_map<Key, T, Hash, Pred, Alloc> *map 
-);
-
-
-
-/// Сериализация std::unordered_multimap
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_multimap<Key, T, Hash, Pred, Alloc> const *map,
-	bool write = true
-);
-
-/// Десериализация std::unordered_multimap
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_multimap<Key, T, Hash, Pred, Alloc> *map 
-);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::unordered_set);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::unordered_map);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::unordered_multiset);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(std::unordered_multimap);
 
 
 
@@ -1612,12 +1400,6 @@ int deserialize(
 
 
 /* DEFINITIONS */
-/*
- * autor:   nvx
- * created: Oct  5 14:14:45 2020
- */
-
-
 // main
 template<class Ostream, typename Meta, typename T>
 int serialize(
@@ -1649,7 +1431,7 @@ int deserialize(
 
 
 
-// to string
+/****************** SERIALIZATION TO STRING *****************/
 template<typename T>
 int serialize(std::string &src, T const *value, int mode)
 {
@@ -1921,49 +1703,6 @@ int deserialize_plain(
 {
 	is.s->read( (char *)obj, size / sizeof(char) );
 	return is ? size : 0;
-}
-
-
-
-
-
-// string
-template<
-	class Ostream, 
-	typename Meta,
-	typename CharType,
-	class CharTraitsType,
-	class Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::basic_string<CharType, CharTraitsType, Alloc> const *str,
-	bool write
-)
-{
-	int32_t size = str->size();
-	return
-		serialize(os, &size, write) +
-		serialize_plain( os, (void *)str->data(), sizeof(*str->data())*size, write );
-}
-
-template<
-	class Istream, 
-	typename Meta,
-	typename CharType,
-	class CharTraitsType,
-	class Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::basic_string<CharType, CharTraitsType, Alloc> *str 
-)
-{
-	int32_t size;
-	int res = deserialize( is, &size );
-	str->resize(size);
-	res += deserialize_plain( is, str->data(), sizeof(*str->data()) * size );
-	return res;
 }
 
 
@@ -2454,8 +2193,22 @@ int deserialize_resizable_container(
 
 
 
+template<typename T>
+struct remove_const_from_pair
+{
+	typedef typename std::remove_const<T>::type type;
+};
+
+template<typename T, typename U>
+struct remove_const_from_pair<std::pair<T, U>>
+{
+	typedef std::pair<
+		typename std::remove_const<T>::type,
+		typename std::remove_const<U>::type
+	> type;
+};
+
 template<
-	typename T,
 	class Istream,
 	typename Meta,
 	class Cont
@@ -2465,6 +2218,10 @@ int deserialize_inserted_container(
 	Cont *cont 
 )
 {
+	typedef typename remove_const_from_pair<
+		typename std::remove_reference<decltype(*cont->begin())>::type
+	>::type obj_t;
+
 	int res = 0;
 	int32_t size;
 
@@ -2473,12 +2230,11 @@ int deserialize_inserted_container(
 
 	cont->clear();
 
-	T obj;
 	for(int32_t i = 0; i < size; ++i)
 	{
+		obj_t obj;
 		res += deserialize(is, &obj);
 		cont->insert(std::move(obj));
-		obj = T();
 	}
 
 	return res;
@@ -2488,366 +2244,23 @@ int deserialize_inserted_container(
 
 
 
-/* vector */
-template<
-	class Ostream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::vector<T, Alloc> const *cont,
-	bool write
-)
-{
-	return serialize_container(os, cont, write);
-}
+/******************** STANDART CONTAINERS *******************/
 
-template<
-	class Istream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::vector<T, Alloc> *cont 
-)
-{
-	return deserialize_resizable_container(is, cont);
-}
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DEFINE(std::basic_string);
 
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DEFINE(std::vector);
+_NVX_SERIALIZABLE_RESIZABLE_CONTANER_DEFINE(std::list);
 
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::set);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::map);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::multiset);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::multimap);
 
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::unordered_set);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::unordered_map);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::unordered_multiset);
+_NVX_SERIALIZABLE_INSERTED_CONTANER_DEFINE(std::unordered_multimap);
 
-
-/* list */
-template<
-	class Ostream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::list<T, Alloc> const *list,
-	bool write
-)
-{
-	return serialize_container(os, list, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename T,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::list<T, Alloc> *list 
-)
-{
-	return deserialize_resizable_container(is, list);
-}
-
-
-
-
-
-/* set */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::set<Key, Compare, Alloc> const *set,
-	bool write
-)
-{
-	return serialize_container(os, set, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::set<Key, Compare, Alloc> *set 
-)
-{
-	return deserialize_inserted_container<Key>(is, set);
-}
-
-
-
-
-
-/* multiset */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::multiset<Key, Compare, Alloc> const *set,
-	bool write
-)
-{
-	return serialize_container(os, set, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::multiset<Key, Compare, Alloc> *set 
-)
-{
-	return deserialize_inserted_container<Key>(is, set);
-}
-	
-
-
-
-/* unordered_set */
-template<
-	class Ostream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_set<Value, Hash, Pred, Alloc> const *set,
-	bool write
-)
-{
-	return serialize_container(os, set);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_set<Value, Hash, Pred, Alloc> *set 
-)
-{
-	return deserialize_inserted_container<Value>(is, set);
-}
-
-
-
-
-
-/* unordered_multiset */
-template<
-	class Ostream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_multiset<Value, Hash, Pred, Alloc> const *set,
-	bool write
-)
-{
-	return serialize_container(os, set, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Value,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_multiset<Value, Hash, Pred, Alloc> *set 
-)
-{
-	return deserialize_inserted_container<Value>(is, set);
-}
-
-
-
-
-
-/* map */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::map<Key, T, Compare, Alloc> const *map,
-	bool write
-)
-{
-	return serialize_container(os, map, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::map<Key, T, Compare, Alloc> *map 
-)
-{
-	return deserialize_inserted_container<std::pair<Key, T>>(is, map);
-}
-
-
-
-/* multimap */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::multimap<Key, T, Compare, Alloc> const *map,
-	bool write
-)
-{
-	return serialize_container(os, map, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Compare,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::multimap<Key, T, Compare, Alloc> *map 
-)
-{
-	return deserialize_inserted_container<std::pair<Key, T>>(is, map);
-}
-
-
-
-/* unordered map */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_map<Key, T, Hash, Pred, Alloc> const *map,
-	bool write
-)
-{
-	return serialize_container(os, map, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_map<Key, T, Hash, Pred, Alloc> *map 
-)
-{
-	return deserialize_inserted_container<std::pair<Key, T>>(is, map);
-}
-
-
-
-/* unordered_multimap */
-template<
-	class Ostream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int serialize(
-	archive<Ostream, Meta> &os,
-	std::unordered_multimap<Key, T, Hash, Pred, Alloc> const *map,
-	bool write
-)
-{
-	return serialize_container(os, map, write);
-}
-
-template<
-	class Istream,
-	typename Meta,
-	typename Key,
-	typename T,
-	typename Hash,
-	typename Pred,
-	typename Alloc
->
-int deserialize(
-	archive<Istream, Meta> &is,
-	std::unordered_multimap<Key, T, Hash, Pred, Alloc> *map 
-)
-{
-	return deserialize_inserted_container<std::pair<Key, T>>(is, map);
-}
 
 /*! @} */
 
