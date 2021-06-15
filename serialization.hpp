@@ -120,7 +120,7 @@ inline void open_io_file(std::fstream *stream, char const *filename)
 		return;
 
 	stream->open(
-		filename, 
+		filename,
 		std::ios_base::in |
 		  std::ios_base::out |
 		  std::ios_base::trunc
@@ -161,7 +161,7 @@ enum ArchiveMode
 
 	/// Режим поддержки разделяемых обычных указателей
 	/*!
-	 * Обычные указатели сохраняются и ассоциируются с 
+	 * Обычные указатели сохраняются и ассоциируются с
 	 * уникальными идентификаторами. Если в дальнейшем потребуется
 	 * десериализовать указатель, который уже встречался,
 	 * то возвратится сохранённый указатель
@@ -170,7 +170,7 @@ enum ArchiveMode
 
 	/// Режим поддержки разделяемых (std::shared_ptr) указателей
 	/*!
-	 * Указатели std::shared_ptr сохраняются и ассоциируются с 
+	 * Указатели std::shared_ptr сохраняются и ассоциируются с
 	 * уникальными идентификаторами. Если в дальнейшем потребуется
 	 * десериализовать указатель, который уже встречался,
 	 * то возвратится сохранённый указатель. (Режим по умолчанию)
@@ -186,7 +186,7 @@ class Lira;
 /// Класс архива, необходимый для (де)сериализации
 /*!
  * Указатели сохраняются только в пределах класса archive.
- * 
+ *
  * \param Stream — класс потока, использующийся для
  * (де)сериализации, например, ostream или istream,
  * также stringstream; класс должен иметь следующие методы:
@@ -331,7 +331,7 @@ private:
 		std::true_type isfundamental
 	);
 
-	
+
 	// plain
 	template<class Ostream, typename M>
 	friend int serialize_plain(
@@ -563,10 +563,10 @@ public: \
 		int res = nvx::deserialize_elements( is, __VA_ARGS__ ); \
 		after_deserialization(); \
 		return res; \
-	} 
+	}
 
 /*!
- * Используется этот макрос, если структура данных является 
+ * Используется этот макрос, если структура данных является
  * плоской
  */
 #define NVX_SERIALIZABLE_PLAIN() \
@@ -646,7 +646,7 @@ public: \
 #define _NVX_DESERIALIZE_RESIZABLE_CONTAINER_DEFINE(contname) \
 	_NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname) \
 	{ return nvx::deserialize_resizable_container(is, cont); }
- 
+
 #define _NVX_DESERIALIZE_INSERTED_CONTAINER_DEFINE(contname) \
 	_NVX_DESERIALIZE_INSERTED_CONTAINER_DECLARE(contname) \
 	{ return nvx::deserialize_inserted_container(is, cont); }
@@ -699,7 +699,7 @@ public: \
  * передаётся указатель на указатель на первый элемент массива),
  * однако есть иключения:
  * - если сериализуется статический массив (т.е. размер которого не
- *   меняется во время выполнения программы), то передаётся 
+ *   меняется во время выполнения программы), то передаётся
  *   указатель на первый элемент массива (то есть сам массив)
  *   (функция serialize_static)
  * - если сериализуются плоские данные (serialize_plain), то
@@ -917,7 +917,7 @@ std::string serialize(
 template<typename T>
 int deserialize(
 	std::string const &src,
-	T *value, 
+	T *value,
 	int mode = ArchiveMode::determine_shared_mode
 );
 
@@ -992,7 +992,7 @@ std::string serialize_array(
 template<typename T>
 int deserialize_array(
 	std::string const &src,
-	T **value, 
+	T **value,
 	int *size,
 	int mode = ArchiveMode::determine_shared_mode
 );
@@ -1072,7 +1072,7 @@ std::string serialize_static(
 template<typename T>
 int deserialize_static(
 	std::string const &src,
-	T *value, 
+	T *value,
 	int size,
 	int mode = ArchiveMode::determine_shared_mode
 );
@@ -1114,7 +1114,7 @@ int _serialize_final(
 template<class Ostream, typename Meta, typename T>
 int _deserialize_final(
 	archive<Ostream, Meta> &os,
-	T *value 
+	T *value
 );
 
 
@@ -1181,7 +1181,7 @@ template<class Ostream, typename Meta, typename T>
 int _deserialize_dispatcher(
 	archive<Ostream, Meta> &os,
 	T *obj,
-	std::true_type 
+	std::true_type
 );
 
 /// Вспомогательная функция для десериализации обычных указателей
@@ -1195,16 +1195,16 @@ template<class Ostream, typename Meta, typename T>
 inline int _deserialize_dispatcher(
 	archive<Ostream, Meta> &os,
 	T *obj,
-	std::false_type 
+	std::false_type
 );
 
 
 
 // shared pointers
-/// Вспомогательная функция для сериализации std::shared_pointer
+/// Вспомогательная функция для сериализации std::shared_ptr
 /*!
  * Вспомогательная функция для сериализации,
- * если включено разпознавание разделяемых 
+ * если включено разпознавание разделяемых
  * shared_pointer (т.е. установлен флаг
  * determine_shared_mode), то функция ведёт
  * себя особым образом
@@ -1216,10 +1216,10 @@ int serialize(
 	bool write = true
 );
 
-/// Вспомогательная функция для десериализации std::shared_pointer
+/// Вспомогательная функция для десериализации std::shared_ptr
 /*!
  * Вспомогательная функция для десериализации,
- * если включено разпознавание разделяемых 
+ * если включено разпознавание разделяемых
  * shared_pointer (т.е. установлен флаг
  * determine_shared_mode), то функция ведёт
  * себя особым образом
@@ -1227,7 +1227,25 @@ int serialize(
 template<class Istream, typename Meta, typename T>
 int deserialize(
 	archive<Istream, Meta> &is,
-	std::shared_ptr<T> *obj 
+	std::shared_ptr<T> *obj
+);
+
+
+
+// unique pointers
+/// Вспомогательная функция для сериализации std::unique_ptr
+template<class Ostream, typename Meta, typename T>
+int serialize(
+	archive<Ostream, Meta> &os,
+	std::unique_ptr<T> const *obj,
+	bool write = true
+);
+
+/// Вспомогательная функция для десериализации std::unique_ptr
+template<class Istream, typename Meta, typename T>
+int deserialize(
+	archive<Istream, Meta> &is,
+	std::unique_ptr<T> *obj
 );
 
 /*! @} */
@@ -1239,7 +1257,7 @@ int deserialize(
 /************************ STD-STRUCTS ***********************/
 /* STD-STRUCTS */
 /*!
- * \defgroup std_serialization Стандартные контейнеры и структуры 
+ * \defgroup std_serialization Стандартные контейнеры и структуры
  * \ingroup serialization_functions
  *
  * Эти функции предназначены для сериализации стандартных
@@ -1261,7 +1279,7 @@ int deserialize(
  *
  * \param os — архив, с помощью которого будет производится
  * (де)сериализация
- * 
+ *
  * \param obj — объект, который необходимо (де)сериализовать
  *
  * \param [write] — аргумент только для функций сериализации;
@@ -1283,7 +1301,7 @@ int serialize(
 template<class Istream, typename Meta, typename T, typename U>
 int deserialize(
 	archive<Istream, Meta> &is,
-	std::pair<T, U> *p 
+	std::pair<T, U> *p
 );
 
 
@@ -1336,7 +1354,7 @@ int serialize_container(
 template<class Istream, typename Meta, class ResizableContainer>
 int deserialize_resizable_container(
 	archive<Istream, Meta> &is,
-	ResizableContainer *cont 
+	ResizableContainer *cont
 );
 
 
@@ -1368,7 +1386,7 @@ template<
 >
 int deserialize_inserted_container(
 	archive<Istream, Meta> &is,
-	Cont *cont 
+	Cont *cont
 );
 
 
@@ -1418,7 +1436,7 @@ int serialize(
 template<class Istream, typename Meta, typename T>
 int deserialize(
 	archive<Istream, Meta> &is,
-	T *value 
+	T *value
 )
 {
 	return _deserialize_dispatcher(
@@ -1508,7 +1526,7 @@ std::string serialize_array(
 template<typename T>
 int deserialize_array(
 	std::string const &src,
-	T **value, 
+	T **value,
 	int *size,
 	int mode
 )
@@ -1570,7 +1588,7 @@ std::string serialize_static(
 template<typename T>
 int deserialize_static(
 	std::string const &src,
-	T *value, 
+	T *value,
 	int size,
 	int mode
 )
@@ -1623,7 +1641,7 @@ template<class Istream, typename Meta, typename T>
 int deserialize_array(
 	archive<Istream, Meta> &is,
 	T **value,
-	int *sizeptr 
+	int *sizeptr
 )
 {
 	int32_t size;
@@ -1666,7 +1684,7 @@ template<class Istream, typename Meta, typename T>
 int deserialize_static(
 	archive<Istream, Meta> &is,
 	T *value,
-	int size 
+	int size
 )
 {
 	int res = 0;
@@ -1698,7 +1716,7 @@ template<class Istream, typename Meta>
 int deserialize_plain(
 	archive<Istream, Meta> &is,
 	void *obj,
-	int size 
+	int size
 )
 {
 	is.s->read( (char *)obj, size / sizeof(char) );
@@ -1728,11 +1746,11 @@ template<class Istream, typename Meta, typename T>
 int _deserialize_final(
 	archive<Istream, Meta> &is,
 	T *value,
-	std::true_type isfundamental 
+	std::true_type isfundamental
 )
 {
 	is.s->read( (char *)value, sizeof *value );
-	return (bool)is ? sizeof *value : 0; 
+	return (bool)is ? sizeof *value : 0;
 }
 
 
@@ -1752,7 +1770,7 @@ template<class Ostream, typename Meta, typename T>
 int _deserialize_final(
 	archive<Ostream, Meta> &os,
 	T *value,
-	std::false_type isfundamental 
+	std::false_type isfundamental
 )
 {
 	return value->deserialize(os);
@@ -1847,7 +1865,7 @@ template<class Istream, typename Meta, typename T>
 int _deserialize_dispatcher(
 	archive<Istream, Meta> &is,
 	T *obj,
-	std::true_type 
+	std::true_type
 )
 {
 	if( !(is.mode & determine_pointers_mode) )
@@ -1860,7 +1878,7 @@ int _deserialize_dispatcher(
 			*obj = nullptr;
 			return res;
 		}
-		
+
 		*obj = new typename std::remove_pointer<T>::type;
 		res += deserialize(is, *obj);
 		return res;
@@ -1889,7 +1907,7 @@ int _deserialize_dispatcher(
 	{
 		// TODO: сделать широкий поиск вместо глубокого
 		int p = is.s->tellg();
-		is.lira->get(id, *obj); 
+		is.lira->get(id, *obj);
 		is.s->seekg(p);
 	}
 	else
@@ -1904,7 +1922,7 @@ template<class Ostream, typename Meta, typename T>
 inline int _deserialize_dispatcher(
 	archive<Ostream, Meta> &os,
 	T *obj,
-	std::false_type 
+	std::false_type
 )
 {
 	return _deserialize_final(os, obj, typename std::is_fundamental<T>::type());
@@ -2016,7 +2034,7 @@ int serialize(
 /// Вспомогательная функция для десериализации std::shared_pointer
 /*!
  * Вспомогательная функция для десериализации,
- * если включено разпознавание разделяемых 
+ * если включено разпознавание разделяемых
  * shared_pointer (т.е. установлен флаг
  * determine_shared_mode), то функция ведёт
  * себя особым образом
@@ -2024,7 +2042,7 @@ int serialize(
 template<class Istream, typename Meta, typename T>
 int deserialize(
 	archive<Istream, Meta> &is,
-	std::shared_ptr<T> *obj 
+	std::shared_ptr<T> *obj
 )
 {
 	/*
@@ -2042,7 +2060,7 @@ int deserialize(
 			*obj = std::shared_ptr<T>(nullptr);
 			return res;
 		}
-		
+
 		*obj = std::shared_ptr<T>(new T);
 		res += deserialize(is, obj->get());
 		return res;
@@ -2092,7 +2110,7 @@ int deserialize(
 	{
 		// TODO: сделать широкий поиск вместо глубокого
 		int p = is.s->tellg();
-		is.lira->get(id, obj->get()); 
+		is.lira->get(id, obj->get());
 		is.s->seekg(p);
 	}
 	else
@@ -2100,6 +2118,44 @@ int deserialize(
 		res += deserialize(is, obj->get());
 	}
 
+	return res;
+}
+
+
+
+// unique pointers
+template<class Ostream, typename Meta, typename T>
+int serialize(
+	archive<Ostream, Meta> &os,
+	std::unique_ptr<T> const *obj,
+	bool write
+)
+{
+	byte check = 0;
+	if(obj->get() == nullptr)
+		return serialize(os, &check, write);
+
+	check = 1;
+	return serialize(os, &check, write) + serialize(os, obj->get(), write);
+}
+
+template<class Istream, typename Meta, typename T>
+int deserialize(
+	archive<Istream, Meta> &is,
+	std::unique_ptr<T> *obj
+)
+{
+	byte check = 0;
+
+	int res = deserialize(is, &check);
+	if(!check)
+	{
+		*obj = std::unique_ptr<T>(nullptr);
+		return res;
+	}
+
+	*obj = std::unique_ptr<T>(new T);
+	res += deserialize(is, obj->get());
 	return res;
 }
 
@@ -2132,7 +2188,7 @@ template<
 >
 int deserialize(
 	archive<Istream, Meta> &is,
-	std::pair<T, U> *p 
+	std::pair<T, U> *p
 )
 {
 	return deserialize(is, &p->first) + deserialize(is, &p->second);
@@ -2175,7 +2231,7 @@ template<
 >
 int deserialize_resizable_container(
 	archive<Istream, Meta> &is,
-	ResizableContainer *cont 
+	ResizableContainer *cont
 )
 {
 	int res = 0;
@@ -2215,7 +2271,7 @@ template<
 >
 int deserialize_inserted_container(
 	archive<Istream, Meta> &is,
-	Cont *cont 
+	Cont *cont
 )
 {
 	typedef typename remove_const_from_pair<
@@ -2325,7 +2381,7 @@ public:
 
 	enum Mode
 	{
-		none,     
+		none,
 		recursive // default
 	};
 
@@ -2417,7 +2473,7 @@ public:
 	{
 		if(iosown and ios)
 			delete ios;
-		
+
 		if(head)
 		{
 			head->seekp(0);
@@ -2731,7 +2787,7 @@ private:
 		ios->seekp(fp.p);
 
 		std::set<int> shpsidns;
-		auto oldshps = it != objs.end() ? 
+		auto oldshps = it != objs.end() ?
 			shps.find(id) : shps.end();
 		if(oldshps != shps.end())
 			shpsidns = std::move(oldshps->second),

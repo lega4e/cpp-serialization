@@ -30,7 +30,7 @@ typedef shared_ptr<snode_t> snode_p;
 struct SimpleNode
 {
 	int val;
-	
+
 	snode_p left;
 	snode_p right;
 
@@ -103,7 +103,7 @@ private:
 		{
 			return true;
 		}
-		
+
 		if (lhs.val != rhs.val || lhs.chs.size() != rhs.chs.size())
 			return false;
 

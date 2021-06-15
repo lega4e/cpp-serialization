@@ -66,8 +66,8 @@ inline bool assert_eq(
 // for sequence
 template<typename IteratorLhs, typename IteratorRhs>
 bool assert_eq(
-	IteratorLhs lhsbeg, IteratorLhs lhsend, 
-	IteratorRhs rhsbeg, IteratorRhs rhsend, 
+	IteratorLhs lhsbeg, IteratorLhs lhsend,
+	IteratorRhs rhsbeg, IteratorRhs rhsend,
 	char const *err = "Error", bool silent = false
 )
 {
