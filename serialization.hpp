@@ -1232,6 +1232,24 @@ int deserialize(
 
 
 
+// weak pointers
+/// Вспомогательная функция для сериализации std::weak_ptr
+template<class Ostream, typename Meta, typename T>
+int serialize(
+	archive<Ostream, Meta> &os,
+	std::weak_ptr<T> const *obj,
+	bool write = true
+);
+
+/// Вспомогательная функция для десериализации std::weak_ptr
+template<class Istream, typename Meta, typename T>
+int deserialize(
+	archive<Istream, Meta> &is,
+	std::weak_ptr<T> *obj
+);
+
+
+
 // unique pointers
 /// Вспомогательная функция для сериализации std::unique_ptr
 template<class Ostream, typename Meta, typename T>
@@ -2069,7 +2087,7 @@ int deserialize(
 	/*
 	 * Если же разделяемые указатели поддерживаются, то
 	 * они всегда характеризуются уникальным идентификатором;
-	 * считываем его; проверяем, но ноль ли он
+	 * считываем его; проверяем, не ноль ли он
 	 */
 	id_t id = NULL_ID;
 	int res = deserialize(is, &id);
@@ -2118,6 +2136,48 @@ int deserialize(
 		res += deserialize(is, obj->get());
 	}
 
+	return res;
+}
+
+
+
+// weak pointers
+template<class Ostream, typename Meta, typename T>
+int serialize(
+	archive<Ostream, Meta> &os,
+	std::weak_ptr<T> const *obj,
+	bool write
+)
+{
+	byte check = 0;
+	if(obj->expired())
+	{
+		return serialize(os, &check, write);
+	}
+
+	check = 1;
+	auto p = obj->lock();
+	return serialize(os, &check, write) + serialize(os, &p, write);
+}
+
+template<class Istream, typename Meta, typename T>
+int deserialize(
+	archive<Istream, Meta> &is,
+	std::weak_ptr<T> *obj
+)
+{
+	byte check = 0;
+
+	int res = deserialize(is, &check);
+	if(!check)
+	{
+		*obj = std::weak_ptr<T>();
+		return res;
+	}
+
+	std::shared_ptr<T> val;
+	res += deserialize(is, &val);
+	*obj = val;
 	return res;
 }
 
