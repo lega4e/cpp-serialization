@@ -593,7 +593,7 @@ public: \
 
 /************************ CONTAINERS ************************/
 // DECLARATIONS
-#define _NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
+#define _NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname, bool_write) \
 	template< \
 		class Ostream, \
 		typename Meta, \
@@ -602,17 +602,8 @@ public: \
 	int serialize( \
 		archive<Ostream, Meta> &os, \
 		contname<Other...> const *cont, \
-
-#define _NVX_SERIALIZE_CONTAINER_DECLARE(contname) \
-	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
-		bool write = true \
+		bool_write \
 	)
-
-#define _NVX_SERIALIZE_CONTAINER_DECLARE_NODARG(contname) \
-	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname) \
-		bool write \
-	)
-
 
 #define _NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname) \
 	template< \
@@ -640,7 +631,7 @@ public: \
 
 // DEFINITIONS
 #define _NVX_SERIALIZE_CONTAINER_DEFINE(contname) \
-	_NVX_SERIALIZE_CONTAINER_DECLARE_NODARG(contname) \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname, bool write) \
 	{ return nvx::serialize_container(os, cont, write); }
 
 #define _NVX_DESERIALIZE_RESIZABLE_CONTAINER_DEFINE(contname) \
@@ -655,11 +646,11 @@ public: \
 
 // SERIALIZATION + DESERIALIZATION
 #define _NVX_SERIALIZABLE_RESIZABLE_CONTANER_DECLARE(contname) \
-	_NVX_SERIALIZE_CONTAINER_DECLARE(contname); \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname, bool write = true); \
 	_NVX_DESERIALIZE_RESIZABLE_CONTAINER_DECLARE(contname);
 
 #define _NVX_SERIALIZABLE_INSERTED_CONTANER_DECLARE(contname) \
-	_NVX_SERIALIZE_CONTAINER_DECLARE(contname); \
+	_NVX_SERIALIZE_CONTAINER_DECLARE_CORE(contname, bool write = true); \
 	_NVX_DESERIALIZE_INSERTED_CONTAINER_DECLARE(contname);
 
 
