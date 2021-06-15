@@ -12,6 +12,8 @@ bool std_containers();
 bool strings();
 bool user_structs();
 bool pointers();
+bool shared_pointers_simple();
+bool circle_shared_pointers();
 
 
 

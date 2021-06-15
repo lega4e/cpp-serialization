@@ -32,6 +32,8 @@ int main( int argc, char *argv[] )
 		make_pair(&strings,                     "strings"),
 		make_pair(&user_structs,                "user_structs"),
 		make_pair(&pointers,                    "pointers"),
+		make_pair(&shared_pointers_simple,      "shared_pointers_simple"),
+		make_pair(&circle_shared_pointers,      "circle_shared_pointers"),
 	};
 
 	int success = 0;
@@ -40,6 +42,8 @@ int main( int argc, char *argv[] )
 	{
 		printf("========================================\n");
 		printf("Testing %s...\n", test.second);
+		fflush(stdout);
+
 		if ((*test.first)())
 		{
 			++success;
@@ -52,6 +56,7 @@ int main( int argc, char *argv[] )
 		}
 
 		printf("\n");
+		fflush(stdout);
 	}
 
 	printf("Success: %i\n", success);
