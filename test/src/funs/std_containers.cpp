@@ -73,16 +73,16 @@ bool std_containers()
 
 	try
 	{
-		is_equal(vector,             vectorr,             "Error: vector != vectorr");
-		is_equal(list,               listr,               "Error: list != listr");
-		is_equal(set,                setr,                "Error: set != setr");
-		is_equal(multiset,           multisetr,           "Error: multiset != multisetr");
-		is_equal(unordered_set,      unordered_setr,      "Error: unordered_set != unordered_setr");
-		is_equal(unordered_multiset, unordered_multisetr, "Error: unordered_multiset != unordered_multisetr");
-		is_equal(map,                mapr,                "Error: map != mapr");
-		is_equal(multimap,           multimapr,           "Error: multimap != multimapr");
-		is_equal(unordered_map,      unordered_mapr,      "Error: unordered_map != unordered_mapr");
-		is_equal(unordered_multimap, unordered_multimapr, "Error: unordered_multimap != unordered_multimapr");
+		assert_eq(vector,             vectorr,             "Error: vector != vectorr");
+		assert_eq(list,               listr,               "Error: list != listr");
+		assert_eq(set,                setr,                "Error: set != setr");
+		assert_eq(multiset,           multisetr,           "Error: multiset != multisetr");
+		assert_eq(unordered_set,      unordered_setr,      "Error: unordered_set != unordered_setr");
+		assert_eq(unordered_multiset, unordered_multisetr, "Error: unordered_multiset != unordered_multisetr");
+		assert_eq(map,                mapr,                "Error: map != mapr");
+		assert_eq(multimap,           multimapr,           "Error: multimap != multimapr");
+		assert_eq(unordered_map,      unordered_mapr,      "Error: unordered_map != unordered_mapr");
+		assert_eq(unordered_multimap, unordered_multimapr, "Error: unordered_multimap != unordered_multimapr");
 	}
 	catch (char const *err)
 	{

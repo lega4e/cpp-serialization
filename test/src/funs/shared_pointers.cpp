@@ -220,15 +220,15 @@ bool shared_pointers_simple()
 
 		try
 		{
-			is_equal(*root, *rootr);
-			is_equal(
+			assert_eq(*root, *rootr);
+			assert_eq(
 				rootr->right->left->left.get(),
 				rootr->left->right->left.get(),
 				"Failed poitners"
 			);
 
 			rootr->right->left->left->val = random_value<int>();
-			is_equal(
+			assert_eq(
 				*root->right->left->left,
 				*root->left->right->left,
 				"Failed when change one of shared"
@@ -264,7 +264,7 @@ bool circle_shared_pointers()
 
 		try
 		{
-			is_equal(*root, *rootr);
+			assert_eq(*root, *rootr);
 			if (!same_structs(root, rootr))
 				throw "Not same structs";
 		}

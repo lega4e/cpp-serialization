@@ -34,12 +34,12 @@ struct Plain
 namespace nvx
 {
 	template<>
-	bool is_equal(Plain const &lhs, Plain const &rhs, char const *err, bool silent)
+	bool assert_eq(Plain const &lhs, Plain const &rhs, char const *err, bool silent)
 	{
 		return
-			is_equal(lhs.a, rhs.a, err, silent) &&
-			is_equal(lhs.b, rhs.b, err, silent) &&
-			is_equal(lhs.c, rhs.c, err, silent);
+			assert_eq(lhs.a, rhs.a, err, silent) &&
+			assert_eq(lhs.b, rhs.b, err, silent) &&
+			assert_eq(lhs.c, rhs.c, err, silent);
 	}
 
 	template<>
@@ -89,19 +89,19 @@ struct NoPlain
 namespace nvx
 {
 	template<>
-	bool is_equal(NoPlain const &lhs, NoPlain const &rhs, char const *err, bool silent)
+	bool assert_eq(NoPlain const &lhs, NoPlain const &rhs, char const *err, bool silent)
 	{
 		return
-			is_equal(lhs.stat,   lhs.stat+16,         rhs.stat,   rhs.stat+16,         err, silent) &&
-			is_equal(lhs.dyn,    lhs.dyn+lhs.n,       rhs.dyn,    rhs.dyn+rhs.n,       err, silent) &&
-			is_equal(lhs.dynvec, lhs.dynvec+lhs.vecn, rhs.dynvec, rhs.dynvec+rhs.vecn, err, silent) &&
-			is_equal(lhs.a,   rhs.a,   err, silent) &&
-			is_equal(lhs.a,   rhs.a,   err, silent) &&
-			is_equal(lhs.b,   rhs.b,   err, silent) &&
-			is_equal(lhs.c,   rhs.c,   err, silent) &&
-			is_equal(lhs.s,   rhs.s,   err, silent) &&
-			is_equal(lhs.vec, rhs.vec, err, silent) &&
-			is_equal(lhs.map, rhs.map, err, silent);
+			assert_eq(lhs.stat,   lhs.stat+16,         rhs.stat,   rhs.stat+16,         err, silent) &&
+			assert_eq(lhs.dyn,    lhs.dyn+lhs.n,       rhs.dyn,    rhs.dyn+rhs.n,       err, silent) &&
+			assert_eq(lhs.dynvec, lhs.dynvec+lhs.vecn, rhs.dynvec, rhs.dynvec+rhs.vecn, err, silent) &&
+			assert_eq(lhs.a,   rhs.a,   err, silent) &&
+			assert_eq(lhs.a,   rhs.a,   err, silent) &&
+			assert_eq(lhs.b,   rhs.b,   err, silent) &&
+			assert_eq(lhs.c,   rhs.c,   err, silent) &&
+			assert_eq(lhs.s,   rhs.s,   err, silent) &&
+			assert_eq(lhs.vec, rhs.vec, err, silent) &&
+			assert_eq(lhs.map, rhs.map, err, silent);
 	}
 
 	template<>
@@ -152,8 +152,8 @@ bool user_structs()
 
 		try
 		{
-			is_equal(plain,   plainr,   "plain != plainr");
-			is_equal(noplain, noplainr, "noplain != noplainr");
+			assert_eq(plain,   plainr,   "plain != plainr");
+			assert_eq(noplain, noplainr, "noplain != noplainr");
 		}
 		catch(char const *err)
 		{

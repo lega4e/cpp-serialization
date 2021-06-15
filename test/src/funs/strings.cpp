@@ -34,8 +34,8 @@ bool strings()
 
 		try
 		{
-			is_equal(s, sr, "s != sr");
-			is_equal(ws, wsr, "ws != wsr");
+			assert_eq(s, sr, "s != sr");
+			assert_eq(ws, wsr, "ws != wsr");
 		}
 		catch (char const *err)
 		{

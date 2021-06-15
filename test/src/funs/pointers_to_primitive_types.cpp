@@ -82,18 +82,18 @@ bool pointers_to_primitive_types()
 
 		try
 		{
-			is_equal(*boolval,    *boolvalr,    "Equal fail: boolval != boolvalr");
-			is_equal(*shortval,   *shortvalr,   "Equal fail: shortval != shortvalr");
-			is_equal(*intval,     *intvalr,     "Equal fail: intval != intvalr");
-			is_equal(*longval,    *longvalr,    "Equal fail: longval != longvalr");
-			is_equal(*llongval,   *llongvalr,   "Equal fail: llongval != llongvalr");
-			is_equal(*charval,    *charvalr,    "Equal fail: charval != charvalr");
-			is_equal(*uintval,    *uintvalr,    "Equal fail: uintval != uintvalr");
-			is_equal(*ulongval,   *ulongvalr,   "Equal fail: ulongval != ulongvalr");
-			is_equal(*ullongval,  *ullongvalr,  "Equal fail: ullongval != ullongvalr");
-			is_equal(*floatval,   *floatvalr,   "Equal fail: floatval != floatvalr");
-			is_equal(*doubleval,  *doublevalr,  "Equal fail: doubleval != doublevalr");
-			is_equal(*ldoubleval, *ldoublevalr, "Equal fail: ldoubleval != ldoublevalr");
+			assert_eq(*boolval,    *boolvalr,    "Equal fail: boolval != boolvalr");
+			assert_eq(*shortval,   *shortvalr,   "Equal fail: shortval != shortvalr");
+			assert_eq(*intval,     *intvalr,     "Equal fail: intval != intvalr");
+			assert_eq(*longval,    *longvalr,    "Equal fail: longval != longvalr");
+			assert_eq(*llongval,   *llongvalr,   "Equal fail: llongval != llongvalr");
+			assert_eq(*charval,    *charvalr,    "Equal fail: charval != charvalr");
+			assert_eq(*uintval,    *uintvalr,    "Equal fail: uintval != uintvalr");
+			assert_eq(*ulongval,   *ulongvalr,   "Equal fail: ulongval != ulongvalr");
+			assert_eq(*ullongval,  *ullongvalr,  "Equal fail: ullongval != ullongvalr");
+			assert_eq(*floatval,   *floatvalr,   "Equal fail: floatval != floatvalr");
+			assert_eq(*doubleval,  *doublevalr,  "Equal fail: doubleval != doublevalr");
+			assert_eq(*ldoubleval, *ldoublevalr, "Equal fail: ldoubleval != ldoublevalr");
 		}
 		catch (char const *err)
 		{

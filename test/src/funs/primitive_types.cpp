@@ -80,18 +80,18 @@ bool primitive_types()
 
 		try
 		{
-			is_equal(boolval,    boolvalr,    (char const *)"Equal fail: boolval != boolvalr");
-			is_equal(shortval,   shortvalr,   (char const *)"Equal fail: shortval != shortvalr");
-			is_equal(intval,     intvalr,     (char const *)"Equal fail: intval != intvalr");
-			is_equal(longval,    longvalr,    (char const *)"Equal fail: longval != longvalr");
-			is_equal(llongval,   llongvalr,   (char const *)"Equal fail: llongval != llongvalr");
-			is_equal(charval,    charvalr,    (char const *)"Equal fail: charval != charvalr");
-			is_equal(uintval,    uintvalr,    (char const *)"Equal fail: uintval != uintvalr");
-			is_equal(ulongval,   ulongvalr,   (char const *)"Equal fail: ulongval != ulongvalr");
-			is_equal(ullongval,  ullongvalr,  (char const *)"Equal fail: ullongval != ullongvalr");
-			is_equal(floatval,   floatvalr,   (char const *)"Equal fail: floatval != floatvalr");
-			is_equal(doubleval,  doublevalr,  (char const *)"Equal fail: doubleval != doublevalr");
-			is_equal(ldoubleval, ldoublevalr, (char const *)"Equal fail: ldoubleval != ldoublevalr");
+			assert_eq(boolval,    boolvalr,    (char const *)"Equal fail: boolval != boolvalr");
+			assert_eq(shortval,   shortvalr,   (char const *)"Equal fail: shortval != shortvalr");
+			assert_eq(intval,     intvalr,     (char const *)"Equal fail: intval != intvalr");
+			assert_eq(longval,    longvalr,    (char const *)"Equal fail: longval != longvalr");
+			assert_eq(llongval,   llongvalr,   (char const *)"Equal fail: llongval != llongvalr");
+			assert_eq(charval,    charvalr,    (char const *)"Equal fail: charval != charvalr");
+			assert_eq(uintval,    uintvalr,    (char const *)"Equal fail: uintval != uintvalr");
+			assert_eq(ulongval,   ulongvalr,   (char const *)"Equal fail: ulongval != ulongvalr");
+			assert_eq(ullongval,  ullongvalr,  (char const *)"Equal fail: ullongval != ullongvalr");
+			assert_eq(floatval,   floatvalr,   (char const *)"Equal fail: floatval != floatvalr");
+			assert_eq(doubleval,  doublevalr,  (char const *)"Equal fail: doubleval != doublevalr");
+			assert_eq(ldoubleval, ldoublevalr, (char const *)"Equal fail: ldoubleval != ldoublevalr");
 		}
 		catch (char const *err)
 		{

@@ -102,7 +102,7 @@ bool pointers()
 		archive(&ss) >> &noderp;
 		unique_ptr<Node> noder(noderp);
 
-		is_equal(*node, *noder);
+		assert_eq(*node, *noder);
 	}
 
 	return true;

@@ -56,9 +56,9 @@ bool arrays_and_plain()
 
 		try
 		{
-			is_equal(dyn,   dyn+arrsize,     dynr,   dynr+arrsizer,    "dyn != dynr");
-			is_equal(stat,  stat+100,        statr,  statr+100,        "stat != statr");
-			is_equal(plain, plain+plainsize, plainr, plainr+plainsize, "plain != plainr");
+			assert_eq(dyn,   dyn+arrsize,     dynr,   dynr+arrsizer,    "dyn != dynr");
+			assert_eq(stat,  stat+100,        statr,  statr+100,        "stat != statr");
+			assert_eq(plain, plain+plainsize, plainr, plainr+plainsize, "plain != plainr");
 		}
 		catch (char const *err)
 		{
