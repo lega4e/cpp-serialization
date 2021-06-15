@@ -13,6 +13,68 @@
 
 #include <nvx/random.hpp>
 
+#define NOREF(T) typename std::remove_reference<T>::type
+
+
+
+
+
+namespace nvx
+{
+	constexpr int const MIN_COUNT = 2;
+	constexpr int const MAX_COUNT = 5;
+
+	template<typename T, bool IsInt, bool IsFloat, bool IsPoitner>
+	struct _random_dispatcher;
+}
+
+template<
+	typename T,
+	typename TNOREF = typename std::remove_reference<T>::type,
+	bool IsInt      = std::is_integral<TNOREF>::value,
+	bool IsFloat    = std::is_floating_point<TNOREF>::value,
+	bool IsPointer  = std::is_pointer<TNOREF>::value
+>
+TNOREF random_value()
+{
+	return nvx::_random_dispatcher<
+		TNOREF, IsInt, IsFloat, IsPointer
+	>::_random();
+}
+
+
+
+
+
+
+/************************** STRINGS *************************/
+template<>
+std::string random_value<std::string>()
+{
+	std::string s;
+	s.resize(nvx::disI(nvx::MIN_COUNT, nvx::MAX_COUNT)(dre));
+
+	for (auto b = s.begin(), e = s.end(); b != e; ++b)
+		*b = nvx::disI(0, 1)(dre) ? nvx::disI('a', 'z')(dre) : nvx::disI('A', 'Z')(dre);
+
+	return s;
+}
+
+template<>
+std::wstring random_value<std::wstring>()
+{
+	std::wstring s;
+	s.resize(nvx::disI(nvx::MIN_COUNT, nvx::MAX_COUNT)(dre));
+
+	for (auto b = s.begin(), e = s.end(); b != e; ++b)
+		*b = nvx::disI(0, 1)(dre) ? nvx::disI(L'a', L'z')(dre) :
+		     nvx::disI(0, 1)(dre) ? nvx::disI(L'A', L'Z')(dre) :
+			 nvx::disI(0, 1)(dre) ? nvx::disI(L'а', L'я')(dre) :
+			 nvx::disI(L'А', L'Я')(dre);
+
+	return s;
+}
+
 
 
 
@@ -21,26 +83,29 @@ namespace nvx
 {
 
 
+template<typename Iterator>
+void randomize(Iterator b, Iterator e);
 
+template<typename T>
+T &randomize(T &obj)
+{
+	return obj = random_value<T>();
+}
 
-
-constexpr int const MIN_COUNT = 1;
-constexpr int const MAX_COUNT = 100;
-
-
-
-template<typename T, bool IsInt, bool IsFloat, bool IsPoitner>
-struct _random_dispatcher;
 
 template<
 	typename T,
-	bool IsInt = std::is_integral<T>::value,
-	bool IsFloat = std::is_floating_point<T>::value,
-	bool IsPointer = std::is_pointer<T>::value
+	typename TNOREF = typename std::remove_reference<T>::type,
+	bool IsInt      = std::is_integral<TNOREF>::value,
+	bool IsFloat    = std::is_floating_point<TNOREF>::value,
+	bool IsPointer  = std::is_pointer<TNOREF>::value
 >
-T random()
+TNOREF *random_array(int &size)
 {
-	return _random_dispatcher<T, IsInt, IsFloat, IsPointer>::_random();
+	size = disI(MIN_COUNT, MAX_COUNT)(dre);
+	TNOREF *ar = new TNOREF[size];
+	randomize(ar, ar+size);
+	return ar;
 }
 
 
@@ -53,7 +118,7 @@ struct _random_dispatcher<T *, false, false, true>
 {
 	static T *_random()
 	{
-		return new T(random<T>());
+		return new T(random_value<T>());
 	}
 };
 
@@ -83,7 +148,7 @@ struct _random_dispatcher<std::pair<T, U>, false, false, false>
 {
 	static std::pair<T, U> _random()
 	{
-		return std::pair<T, U>( random<T>(), random<U>() );
+		return std::pair<T, U>( random_value<T>(), random_value<U>() );
 	}
 };
 
@@ -91,32 +156,17 @@ struct _random_dispatcher<std::pair<T, U>, false, false, false>
 
 
 
-/************************** STRINGS *************************/
-template<>
-std::string random<std::string>()
+/************************* SEQUENCE *************************/
+template<typename Iterator>
+void randomize(Iterator b, Iterator e)
 {
-	std::string s;
-	s.resize(disI(MIN_COUNT, MAX_COUNT)(dre));
+	while (b != e)
+	{
+		*b = random_value<decltype(*b)>();
+		++b;
+	}
 
-	for (auto b = s.begin(), e = s.end(); b != e; ++b)
-		*b = disI(0, 1)(dre) ? disI('a', 'z')(dre) : disI('A', 'Z')(dre);
-
-	return s;
-}
-
-template<>
-std::wstring random<std::wstring>()
-{
-	std::wstring s;
-	s.resize(disI(MIN_COUNT, MAX_COUNT)(dre));
-
-	for (auto b = s.begin(), e = s.end(); b != e; ++b)
-		*b = disI(0, 1)(dre) ? disI(L'a', L'z')(dre) :
-		     disI(0, 1)(dre) ? disI(L'A', L'Z')(dre) :
-			 disI(0, 1)(dre) ? disI(L'а', L'я')(dre) :
-			 disI(L'А', L'Я')(dre);
-
-	return s;
+	return;
 }
 
 
@@ -129,7 +179,7 @@ template<typename T, typename Cont>
 void insert_random_values(Cont &cont, int count)
 {
 	for (int i = 0; i < count; ++i)
-		cont.insert(random<T>());
+		cont.insert(random_value<T>());
 	return;
 }
 
@@ -137,7 +187,7 @@ template<typename T, typename Cont>
 void push_back_random_values(Cont &cont, int count)
 {
 	for (int i = 0; i < count; ++i)
-		cont.push_back(random<T>());
+		cont.push_back(random_value<T>());
 	return;
 }
 

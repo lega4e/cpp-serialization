@@ -24,7 +24,7 @@ bool is_equal(T const &lhs, U const &rhs, char const *err, bool silent = false)
 	if (silent)
 		return lhs == rhs;
 
-	if (lhs != rhs)
+	if (!(lhs == rhs))
 	{
 		std::cerr << "lhs: " << lhs << ", " << rhs << '\n';
 		throw err;
@@ -42,7 +42,7 @@ inline bool is_equal(
 	if (silent)
 		return lhs == rhs;
 
-	if (lhs != rhs)
+	if (!(lhs == rhs))
 	{
 		// std::wcerr << "lhs: " << ws2s(lhs) << ", " << ws2s(rhs) << '\n';
 		throw err;
@@ -77,8 +77,8 @@ fail_label:
 	if (silent)
 		return false;
 
-	nvx::print(std::cerr << "lhs: ", lhsbegcp, lhsend) << '\n';
-	nvx::print(std::cerr << "rhs: ", rhsbegcp, rhsend) << '\n';
+	nvx::print(std::cerr << "lhs: ", lhsbegcp, lhsend, " ") << '\n';
+	nvx::print(std::cerr << "rhs: ", rhsbegcp, rhsend, " ") << '\n';
 	throw err;
 }
 
