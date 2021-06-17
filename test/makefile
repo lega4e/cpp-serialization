@@ -19,7 +19,7 @@ rerun: clean run
 
 
 source_dirs     := . ./src ./src/funs
-header_dirs     := ../ ./src/tmpls
+header_dirs     := ../ ./src/tmpls ./src/lib
 search_wildcard := $(wildcard $(addsuffix /*.cpp,$(source_dirs)))
 object_files    := $(patsubst %.cpp,%.o,$(search_wildcard))
 object_files    := $(notdir $(object_files))
