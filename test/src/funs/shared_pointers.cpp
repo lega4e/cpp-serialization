@@ -234,9 +234,9 @@ bool shared_pointers_simple()
 				"Failed when change one of shared"
 			);
 		}
-		catch(char const *err)
+		catch(std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			return false;
 		}
 	}
@@ -268,9 +268,9 @@ bool circle_shared_pointers()
 			if (!same_structs(root, rootr))
 				throw "Not same structs";
 		}
-		catch(char const *err)
+		catch(std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			ret = false;
 		}
 

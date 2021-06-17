@@ -28,7 +28,11 @@ namespace nvx
 /********************* ASSERT FUNCTIONS *********************/
 // main functions
 template<typename T, typename U>
-bool assert_eq(T const &lhs, U const &rhs, char const *err = "Error", bool silent = false)
+bool assert_eq(
+	T const &lhs, U const &rhs,
+	std::string const &err = "Error",
+	bool silent = false
+)
 {
 	if (silent)
 		return lhs == rhs;
@@ -47,7 +51,7 @@ bool assert_eq(T const &lhs, U const &rhs, char const *err = "Error", bool silen
 inline bool assert_eq(
 	std::wstring const &lhs,
 	std::wstring const &rhs,
-	char const *err = "Error",
+	std::string const &err = "Error",
 	bool silent = false
 )
 {
@@ -69,7 +73,7 @@ template<typename IteratorLhs, typename IteratorRhs>
 bool assert_eq(
 	IteratorLhs lhsbeg, IteratorLhs lhsend,
 	IteratorRhs rhsbeg, IteratorRhs rhsend,
-	char const *err = "Error", bool silent = false
+	std::string const &err = "Error", bool silent = false
 )
 {
 	auto lhsbegcp = lhsbeg;
@@ -109,7 +113,7 @@ fail_label:
 	bool assert_eq( \
 		seqname<Types...>  const &lhs, \
 		seqname<Types2...> const &rhs, \
-		char const *err = "Error", \
+		std::string const &err = "Error", \
 		bool silent = false \
 	) \
 	{ \
@@ -125,7 +129,7 @@ fail_label:
 	bool assert_eq( \
 		unord_name<T, Other...> const &lhs, \
 		unord_name<T, Other...> const &rhs, \
-		char const *err = "Error", \
+		std::string const &err = "Error", \
 		bool silent = false \
 	) \
 	{ \
@@ -140,7 +144,7 @@ fail_label:
 	bool assert_eq( \
 		unord_name<T, U, Other...> const &lhs, \
 		unord_name<T, U, Other...> const &rhs, \
-		char const *err = "Error", \
+		std::string const &err = "Error", \
 		bool silent = false \
 	) \
 	{ \

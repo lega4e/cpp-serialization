@@ -95,9 +95,9 @@ bool pointers_to_primitive_types()
 			assert_eq(*doubleval,  *doublevalr,  "Equal fail: doubleval != doublevalr");
 			assert_eq(*ldoubleval, *ldoublevalr, "Equal fail: ldoubleval != ldoublevalr");
 		}
-		catch (char const *err)
+		catch (std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			ret = false;
 		}
 

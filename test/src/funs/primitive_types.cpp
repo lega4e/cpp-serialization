@@ -93,9 +93,9 @@ bool primitive_types()
 			assert_eq(doubleval,  doublevalr,  (char const *)"Equal fail: doubleval != doublevalr");
 			assert_eq(ldoubleval, ldoublevalr, (char const *)"Equal fail: ldoubleval != ldoublevalr");
 		}
-		catch (char const *err)
+		catch (std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			return false;
 		}
 	}

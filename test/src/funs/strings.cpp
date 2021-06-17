@@ -37,9 +37,9 @@ bool strings()
 			assert_eq(s, sr, "s != sr");
 			assert_eq(ws, wsr, "ws != wsr");
 		}
-		catch (char const *err)
+		catch (std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			return false;
 		}
 	}

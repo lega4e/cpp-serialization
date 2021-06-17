@@ -60,9 +60,9 @@ bool arrays_and_plain()
 			assert_eq(stat,  stat+100,        statr,  statr+100,        "stat != statr");
 			assert_eq(plain, plain+plainsize, plainr, plainr+plainsize, "plain != plainr");
 		}
-		catch (char const *err)
+		catch (std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			ret = false;
 		}
 

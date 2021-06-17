@@ -34,7 +34,7 @@ struct Plain
 namespace nvx
 {
 	template<>
-	bool assert_eq(Plain const &lhs, Plain const &rhs, char const *err, bool silent)
+	bool assert_eq(Plain const &lhs, Plain const &rhs, std::string const &err, bool silent)
 	{
 		return
 			assert_eq(lhs.a, rhs.a, err, silent) &&
@@ -89,7 +89,7 @@ struct NoPlain
 namespace nvx
 {
 	template<>
-	bool assert_eq(NoPlain const &lhs, NoPlain const &rhs, char const *err, bool silent)
+	bool assert_eq(NoPlain const &lhs, NoPlain const &rhs, std::string const &err, bool silent)
 	{
 		return
 			assert_eq(lhs.stat,   lhs.stat+16,         rhs.stat,   rhs.stat+16,         err, silent) &&
@@ -155,9 +155,9 @@ bool user_structs()
 			assert_eq(plain,   plainr,   "plain != plainr");
 			assert_eq(noplain, noplainr, "noplain != noplainr");
 		}
-		catch(char const *err)
+		catch(std::string const &err)
 		{
-			fprintf(stderr, "%s\n", err);
+			std::cerr << err << std::endl;
 			ret = false;
 		}
 

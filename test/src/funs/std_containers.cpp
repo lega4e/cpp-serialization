@@ -84,9 +84,9 @@ bool std_containers()
 		assert_eq(unordered_map,      unordered_mapr,      "Error: unordered_map != unordered_mapr");
 		assert_eq(unordered_multimap, unordered_multimapr, "Error: unordered_multimap != unordered_multimapr");
 	}
-	catch (char const *err)
+	catch (std::string const &err)
 	{
-		fprintf(stderr, "%s\n", err);
+		std::cerr << err << std::endl;
 		return false;
 	}
 
