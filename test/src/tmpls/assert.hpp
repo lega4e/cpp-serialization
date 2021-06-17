@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <iostream>
 #include <list>
 #include <map>
 #include <set>
@@ -99,7 +100,7 @@ fail_label:
 
 
 
-/******************* STANDART CONTAINUERS *******************/
+/******************** STANDART CONTAINERS *******************/
 /*
  * .begin(), .end()
  */

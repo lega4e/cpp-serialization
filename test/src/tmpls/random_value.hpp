@@ -31,6 +31,9 @@ constexpr int const MAX_COUNT = 5;
 template<typename T, bool IsNumber, bool IsPoitner, typename...Args>
 struct _random_dispatcher;
 
+template<typename T, bool IsNumber, bool IsPoitner, typename...Args>
+struct _random_pointer_dispatcher;
+
 
 
 
@@ -46,7 +49,7 @@ template<
 >
 TNOREF random_value(Args... args)
 {
-	return nvx::_random_dispatcher<
+	return nvx::_random_pointer_dispatcher<
 		TNOREF, IsNumber, IsPointer, Args...
 	>::_random(args...);
 }
@@ -56,6 +59,8 @@ TNOREF random_value(Args... args)
 
 
 /********************* RANDOMIZE, ARRAY *********************/
+
+
 template<typename Iterator, typename...Args>
 void randomize(Iterator b, Iterator e, Args...args)
 {
@@ -143,6 +148,16 @@ struct _random_dispatcher<T, false, false, Args...>
 	static T _random(Args...args)
 	{
 		return T::random_value(args...);
+	}
+};
+
+
+template<typename T, bool IsNumber, bool IsPointer, typename...Args>
+struct _random_pointer_dispatcher
+{
+	static T _random(Args...args)
+	{
+		return _random_dispatcher<T, IsNumber, IsPointer, Args...>::_random(args...);
 	}
 };
 
